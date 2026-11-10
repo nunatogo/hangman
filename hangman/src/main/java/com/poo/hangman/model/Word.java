@@ -11,10 +11,11 @@ public class Word {
     private Category category;
     private Level level;
     
-    public Word(String text, Category category, String clue, Level level){
+    public Word(String text, Category category, String clue){
         this.text = text;
         this.category = category;
         this.clue = clue;
+        this.level = assignLevel();
     }
 
     public String getText() {
@@ -46,12 +47,16 @@ public class Word {
     }
 
     public void setLevel() {
+        this.level = assignLevel();
+    }
+
+    private Level assignLevel() {
         if(this.text.length() <= 5){
-            this.level = Level.FACIL;
+            return Level.FACIL;
         } else if(this.text.length() >= 6 || this.text.length() <= 8){
-            this.level = Level.MEDIO;
+            return Level.MEDIO;
         } else {
-            this.level = Level.DIFICIL;
+            return Level.DIFICIL;
         }
     }
 }
