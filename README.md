@@ -57,7 +57,8 @@ El diagrama UML **actualizado según las clases implementadas** puede editarse e
 classDiagram
     direction LR
 
-    namespace controller {\n    class HangmanGame {
+    namespace controller {
+    class HangmanGame {
         +int MAX_ERRORS
         +int TOTAL_ROUNDS
         -WorkBank wordBank
@@ -91,7 +92,20 @@ classDiagram
         -allLettersGuessed() boolean
     }
 
-    }\n\n    namespace model {\n    class Word {
+    }
+
+    namespace model {
+    class RoundStatus {
+        <<enumeration>>
+        EN_CURSO
+        GANADA
+        PERDIDA
+        -String displayName
+        +getDisplayName() String
+        +toString() String
+    }
+
+    class Word {
         -String text
         -String clue
         -Category category
