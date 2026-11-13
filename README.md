@@ -75,6 +75,7 @@ classDiagram
         +guessLetter(char letter) boolean
         +advanceRound() boolean
         +restartGame() void
+        +isGameStarted() boolean
         +getMaskedWord() String
         +getRoundNumber() int
         +getCurrentLevel() Level

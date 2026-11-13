@@ -41,13 +41,7 @@ public class HangmanGame {
      */
     public HangmanGame() {
         this.wordBank = new WorkBank();
-        this.selectedCategory = null;
-        this.currentWord = null;
-        this.correctLetters = null;
-        this.incorrectLetters = null;
-        this.roundNumber = 0;
-        this.wrongAttempts = 0;
-        this.roundStatus = RoundStatus.EN_CURSO;
+        restartGame();
     }
 
     /**
@@ -69,10 +63,22 @@ public class HangmanGame {
     }
 
     /**
-     * Reinicia la partida conservando la modalidad de categoría seleccionada.
+     * Restablece el estado inicial, sin comenzar una ronda.
+     * El jugador podrá seleccionar nuevamente su categoría al iniciar.
      */
     public void restartGame() {
-        startGame(this.selectedCategory);
+        this.selectedCategory = null;
+        this.currentWord = null;
+        this.correctLetters = null;
+        this.incorrectLetters = null;
+        this.roundNumber = 0;
+        this.wrongAttempts = 0;
+        this.roundStatus = RoundStatus.EN_CURSO;
+    }
+
+    /** @return true si ya se inició la partida y existe una ronda activa o finalizada */
+    public boolean isGameStarted() {
+        return roundNumber > 0;
     }
 
     /**
@@ -180,7 +186,7 @@ public class HangmanGame {
         return masked.toString();
     }
 
-    /** @return número de ronda actual, entre 1 y 3 */
+    /** @return número de ronda actual: 0 sin iniciar, o entre 1 y 3 */
     public int getRoundNumber() {
         return roundNumber;
     }
@@ -259,7 +265,7 @@ public class HangmanGame {
      * Evita utilizar una ronda antes de iniciar la partida.
      */
     private void requireStarted() {
-        if (currentWord == null || roundNumber == 0) {
+        if (!isGameStarted() || currentWord == null) {
             throw new IllegalStateException("Primero debes iniciar la partida");
         }
     }

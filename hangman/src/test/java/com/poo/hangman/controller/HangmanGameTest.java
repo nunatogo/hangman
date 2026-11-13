@@ -46,6 +46,7 @@ class HangmanGameTest {
         HangmanGame game = new HangmanGame();
         assertAll(
             () -> assertEquals(0, game.getRoundNumber()),
+            () -> assertFalse(game.isGameStarted()),
             () -> assertEquals(0, game.getWrongAttempts()),
             () -> assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus()),
             () -> assertNull(game.getSelectedCategory()),
@@ -66,6 +67,7 @@ class HangmanGameTest {
     @Test
     void startsFirstRoundWithEasyLevelAndSevenAttempts() {
         HangmanGame game = newGame();
+        assertTrue(game.isGameStarted());
         assertEquals(1, game.getRoundNumber());
         assertEquals(Level.FACIL, game.getCurrentLevel());
         assertEquals(7, game.getRemainingAttempts());
@@ -143,14 +145,25 @@ class HangmanGameTest {
     }
 
     @Test
-    void restartResetsProgressAndPreservesCategory() {
+    void restartReturnsToInitialStateAndAllowsNewCategory() throws Exception {
         HangmanGame game = new HangmanGame();
         game.startGame(Category.ANIMALES);
+        game.guessLetter('Z');
         game.restartGame();
-        assertEquals(1, game.getRoundNumber());
-        assertEquals(Category.ANIMALES, game.getSelectedCategory());
+        assertEquals(0, game.getRoundNumber());
         assertEquals(0, game.getWrongAttempts());
+        assertNull(game.getSelectedCategory());
+        assertNull(currentWord(game));
+        assertFalse(game.isGameStarted());
+        assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus());
+        assertTrue(game.getCorrectLetters().isEmpty());
         assertTrue(game.getIncorrectLetters().isEmpty());
+        assertThrows(IllegalStateException.class, () -> game.guessLetter('A'));
+
+        game.startGame(Category.COMIDAS);
+        assertTrue(game.isGameStarted());
+        assertEquals(1, game.getRoundNumber());
+        assertEquals(Category.COMIDAS, game.getCurrentWordCategory());
     }
 
     @Test

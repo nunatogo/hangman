@@ -6,7 +6,7 @@
 Gestiona el estado de una partida de tres rondas de ahorcado y se apoya en `WorkBank` para seleccionar una palabra en cada nivel. Coordina el modelo sin mostrar interfaz gráfica; las tres pistas siguen pendientes.
 
 ## Ciclo de vida
-El constructor sin parámetros crea el banco de palabras (`WorkBank`) y deja `currentWord`, `correctLetters` e `incorrectLetters` en `null`, además de `roundNumber = 0`, `wrongAttempts = 0` y `roundStatus = EN_CURSO`. No selecciona una palabra. Para comenzar se debe llamar a `startGame()` o `startGame(Category)`, que preparan la primera ronda y las colecciones. Los métodos que requieren una ronda activa rechazan su uso antes del inicio.
+El constructor sin parámetros crea el banco de palabras (`WorkBank`) y llama a `restartGame()`, que deja `currentWord`, `correctLetters` e `incorrectLetters` en `null`, además de `roundNumber = 0`, `wrongAttempts = 0` y `roundStatus = EN_CURSO`. No selecciona una palabra. Para comenzar se debe llamar a `startGame()` o `startGame(Category)`, que preparan la primera ronda y las colecciones. Los métodos que requieren una ronda activa rechazan su uso antes del inicio. `isGameStarted()` permite distinguir una partida iniciada (`roundNumber > 0`) sin agregar estados nuevos a `RoundStatus`. `restartGame()` restablece los mismos valores del constructor, incluida la categoría en `null`; para jugar nuevamente debe llamarse a `startGame()` o `startGame(Category)`.
 
 **Nota sobre el nombre:** la clase del banco existente en el proyecto se llama `WorkBank`, no `WordBank`; se conserva su nombre para no cambiar otras clases sin solicitarlo.
 
@@ -29,7 +29,8 @@ El constructor sin parámetros crea el banco de palabras (`WorkBank`) y deja `cu
 | `startGame(Category)` | `void` | Comenzar desde la ronda fácil con categoría seleccionada |
 | `guessLetter(char)` | `boolean` | Verificar la letra; retorna si existe en la palabra |
 | `advanceRound()` | `boolean` | Avanzar tras ganar; retorna `false` al completar la tercera ronda |
-| `restartGame()` | `void` | Reiniciar desde la primera ronda |
+| `restartGame()` | `void` | Restablecer el estado inicial sin seleccionar palabra ni categoría |
+| `isGameStarted()` | `boolean` | Indicar si la partida comenzó (`roundNumber > 0`) |
 | `getMaskedWord()` | `String` | Mostrar letras acertadas y guiones bajos |
 | `getRoundNumber()` | `int` | Consultar ronda actual |
 | `getCurrentLevel()` | `Level` | Consultar dificultad de la ronda |
@@ -81,4 +82,4 @@ if (game.getRoundStatus() == RoundStatus.GANADA) {
 - Interfaz gráfica Swing y dibujo progresivo.
 - Puntaje y ranking si el equipo decide implementarlos.
 
-**Decisión de diseño:** la transición entre rondas no es automática; se realiza mediante `advanceRound()` después de que la interfaz comunique el resultado al jugador.
+**Decisión de diseño:** `RoundStatus` describe el estado de una ronda, no si la partida ha comenzado. Antes del inicio o después de reiniciar, el estado permanece `EN_CURSO`, pero `isGameStarted()` devuelve `false`. La transición entre rondas no es automática; se realiza mediante `advanceRound()`.
