@@ -1,10 +1,60 @@
 # Diagrama de clases UML — estado implementado
 
-Diagrama actualizado con las clases Java existentes en `com.poo.hangman.model` de la rama `nunatogo-desa`. Este archivo utiliza Mermaid para que el diagrama se pueda editar como texto y GitHub lo renderice automáticamente.
+Diagrama actualizado con las clases Java existentes en los paquetes `com.poo.hangman.model` y `com.poo.hangman.controller` de la rama `nunatogo-desa`. Este archivo utiliza Mermaid para que el diagrama se pueda editar como texto y GitHub lo renderice automáticamente.
 
 ```mermaid
 classDiagram
     direction LR
+
+    namespace controller {
+    class HangmanGame {
+        +int MAX_ERRORS
+        +int TOTAL_ROUNDS
+        -WorkBank wordBank
+        -Category selectedCategory
+        -Word currentWord
+        -int roundNumber
+        -int wrongAttempts
+        -RoundStatus roundStatus
+        -Set~Character~ correctLetters
+        -Set~Character~ incorrectLetters
+        +HangmanGame()
+        +startGame() void
+        +startGame(Category category) void
+        +guessLetter(char letter) boolean
+        +advanceRound() boolean
+        +restartGame() void
+        +isGameStarted() boolean
+        +getMaskedWord() String
+        +getRoundNumber() int
+        +getCurrentLevel() Level
+        +getSelectedCategory() Category
+        +getCurrentWordCategory() Category
+        +getRoundStatus() RoundStatus
+        +getWrongAttempts() int
+        +getRemainingAttempts() int
+        +getCorrectLetters() Set~Character~
+        +getIncorrectLetters() Set~Character~
+        +isGameWon() boolean
+        +isGameLost() boolean
+        +getRevealedWord() String
+        -startRound() void
+        -allLettersGuessed() boolean
+        -requireStarted() void
+    }
+
+    }
+
+    namespace model {
+    class RoundStatus {
+        <<enumeration>>
+        EN_CURSO
+        GANADA
+        PERDIDA
+        -String displayName
+        +getDisplayName() String
+        +toString() String
+    }
 
     class Word {
         -String text
@@ -55,6 +105,12 @@ classDiagram
         DIFICIL
     }
 
+    }
+
+    HangmanGame --> WorkBank : selecciona palabra
+    HangmanGame --> Word : ronda actual
+    HangmanGame --> RoundStatus : estado de ronda
+    HangmanGame ..> Level : progresión
     WorkBank "1" *-- "0..*" Word : almacena
     Word --> Category : pertenece a
     Word --> Level : dificultad
@@ -68,4 +124,4 @@ classDiagram
 - `selectRandomWord()` es un método privado auxiliar; no existen métodos separados que devuelvan listas filtradas.
 - `Word` calcula la dificultad según la longitud de la palabra, valida su contenido y conserva su categoría y pista.
 - `Category` y `Level` son enumeraciones.
-- El controlador del juego, la interfaz Swing y el avance de las tres rondas todavía no aparecen en el código revisado; se incorporarán al diagrama cuando estén implementados.
+- `HangmanGame` controla las tres rondas, los intentos y las letras. Sus pistas y la interfaz Swing todavía están pendientes.
