@@ -6,6 +6,47 @@ Diagrama actualizado con las clases Java existentes en `com.poo.hangman.model` d
 classDiagram
     direction LR
 
+    class HangmanGame {
+        +int MAX_ERRORS
+        +int TOTAL_ROUNDS
+        -WorkBank wordBank
+        -Category selectedCategory
+        -Word currentWord
+        -int roundNumber
+        -int wrongAttempts
+        -RoundStatus roundStatus
+        -Set~Character~ correctLetters
+        -Set~Character~ incorrectLetters
+        +HangmanGame()
+        +HangmanGame(Category category)
+        +HangmanGame(WorkBank wordBank, Category category)
+        +guessLetter(char letter) boolean
+        +advanceRound() boolean
+        +restartGame() void
+        +getMaskedWord() String
+        +getRoundNumber() int
+        +getCurrentLevel() Level
+        +getSelectedCategory() Category
+        +getCurrentWordCategory() Category
+        +getRoundStatus() RoundStatus
+        +getWrongAttempts() int
+        +getRemainingAttempts() int
+        +getCorrectLetters() Set~Character~
+        +getIncorrectLetters() Set~Character~
+        +isGameWon() boolean
+        +isGameLost() boolean
+        +getRevealedWord() String
+        -startRound() void
+        -allLettersGuessed() boolean
+    }
+
+    class RoundStatus {
+        <<enumeration>>
+        IN_PROGRESS
+        WON
+        LOST
+    }
+
     class Word {
         -String text
         -String clue
@@ -55,7 +96,7 @@ classDiagram
         DIFICIL
     }
 
-    WorkBank "1" *-- "0..*" Word : almacena
+    HangmanGame --> WorkBank : selecciona palabra\n    HangmanGame --> Word : ronda actual\n    HangmanGame --> RoundStatus : estado\n    HangmanGame ..> Level : progresión\n    WorkBank "1" *-- "0..*" Word : almacena
     Word --> Category : pertenece a
     Word --> Level : dificultad
     WorkBank ..> Category : filtra por
@@ -68,4 +109,4 @@ classDiagram
 - `selectRandomWord()` es un método privado auxiliar; no existen métodos separados que devuelvan listas filtradas.
 - `Word` calcula la dificultad según la longitud de la palabra, valida su contenido y conserva su categoría y pista.
 - `Category` y `Level` son enumeraciones.
-- El controlador del juego, la interfaz Swing y el avance de las tres rondas todavía no aparecen en el código revisado; se incorporarán al diagrama cuando estén implementados.
+- `HangmanGame` controla las tres rondas, los intentos y las letras. Sus pistas y la interfaz Swing todavía están pendientes.
