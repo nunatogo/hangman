@@ -181,4 +181,53 @@ class HangmanGameTest {
         assertThrows(UnsupportedOperationException.class,
             () -> game.getCorrectLetters().add('A'));
     }
+
+    /**
+     * Simula el flujo que realiza una vista Swing:
+     * iniciar ronda fácil, intentar la letra A y refrescar los indicadores.
+     * Se fija PERRO para que el resultado no dependa del azar.
+     */
+    @Test
+    void interfaceSequenceWhenLetterAIsIncorrect() throws Exception {
+        // 1. La vista crea el controlador y el jugador presiona "Iniciar".
+        HangmanGame game = new HangmanGame();
+        assertFalse(game.isGameStarted());
+        game.startGame();
+
+        // 2. Para esta prueba, la palabra fácil elegida será PERRO.
+        setWord(game, "PERRO");
+
+        // 3. La vista consulta los valores iniciales.
+        assertAll(
+            () -> assertTrue(game.isGameStarted()),
+            () -> assertEquals(1, game.getRoundNumber()),
+            () -> assertEquals(Level.FACIL, game.getCurrentLevel()),
+            () -> assertEquals("_ _ _ _ _", game.getMaskedWord()),
+            () -> assertEquals(0, game.getWrongAttempts()),
+            () -> assertEquals(7, game.getRemainingAttempts()),
+            () -> assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus())
+        );
+
+        // 4. El jugador presiona el botón A.
+        boolean correct = game.guessLetter('A');
+
+        // 5. La vista actualiza la palabra, el contador, el dibujo y las letras.
+        assertAll(
+            () -> assertFalse(correct, "La palabra PERRO no contiene A"),
+            () -> assertEquals("_ _ _ _ _", game.getMaskedWord()),
+            () -> assertEquals(1, game.getWrongAttempts()),
+            () -> assertEquals(6, game.getRemainingAttempts()),
+            () -> assertTrue(game.getIncorrectLetters().contains('A')),
+            () -> assertTrue(game.getCorrectLetters().isEmpty()),
+            () -> assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus()),
+            () -> assertFalse(game.isGameLost()),
+            () -> assertFalse(game.isGameWon())
+        );
+
+        // 6. Si vuelve a presionar A, no debe descontar otro intento.
+        assertFalse(game.guessLetter('A'));
+        assertEquals(1, game.getWrongAttempts());
+        assertEquals(6, game.getRemainingAttempts());
+    }
+
 }
