@@ -331,4 +331,70 @@ class HangmanGameTest {
         assertEquals(7, game.getRemainingAttempts());
     }
 
+
+    /**
+     * Simula una partida completa desde la vista con palabras controladas:
+     * PERRO (fácil), CONEJO (medio) y ELEFANTES (difícil).
+     * La victoria final solo se alcanza al ganar las tres rondas.
+     */
+    @Test
+    void interfaceSequenceCompletesAllThreeRoundsAndWinsGame() throws Exception {
+        HangmanGame game = new HangmanGame();
+        assertFalse(game.isGameStarted());
+        game.startGame();
+
+        // Ronda 1: PERRO, nivel fácil.
+        setWord(game, "PERRO");
+        assertEquals(1, game.getRoundNumber());
+        assertEquals(Level.FACIL, game.getCurrentLevel());
+        for (char letter : "PERO".toCharArray()) {
+            assertTrue(game.guessLetter(letter));
+        }
+        assertAll(
+            () -> assertEquals("P E R R O", game.getMaskedWord()),
+            () -> assertEquals(RoundStatus.GANADA, game.getRoundStatus()),
+            () -> assertEquals(7, game.getRemainingAttempts()),
+            () -> assertFalse(game.isGameWon())
+        );
+        assertTrue(game.advanceRound());
+
+        // Ronda 2: CONEJO, nivel medio.
+        setWord(game, "CONEJO");
+        assertEquals(2, game.getRoundNumber());
+        assertEquals(Level.MEDIO, game.getCurrentLevel());
+        assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus());
+        assertEquals(0, game.getWrongAttempts());
+        for (char letter : "CONEJ".toCharArray()) {
+            assertTrue(game.guessLetter(letter));
+        }
+        assertAll(
+            () -> assertEquals("C O N E J O", game.getMaskedWord()),
+            () -> assertEquals(RoundStatus.GANADA, game.getRoundStatus()),
+            () -> assertFalse(game.isGameWon())
+        );
+        assertTrue(game.advanceRound());
+
+        // Ronda 3: ELEFANTES, nivel difícil.
+        setWord(game, "ELEFANTES");
+        assertEquals(3, game.getRoundNumber());
+        assertEquals(Level.DIFICIL, game.getCurrentLevel());
+        assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus());
+        for (char letter : "ELEFANTS".toCharArray()) {
+            assertTrue(game.guessLetter(letter));
+        }
+
+        // Al ganar la tercera ronda, la partida está completada.
+        assertAll(
+            () -> assertEquals("E L E F A N T E S", game.getMaskedWord()),
+            () -> assertEquals("ELEFANTES", game.getRevealedWord()),
+            () -> assertEquals(RoundStatus.GANADA, game.getRoundStatus()),
+            () -> assertTrue(game.isGameWon()),
+            () -> assertFalse(game.isGameLost()),
+            () -> assertEquals(0, game.getWrongAttempts()),
+            () -> assertEquals(7, game.getRemainingAttempts())
+        );
+        assertFalse(game.advanceRound(), "No debe existir una cuarta ronda");
+        assertThrows(IllegalStateException.class, () -> game.guessLetter('A'));
+    }
+
 }
