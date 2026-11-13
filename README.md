@@ -51,13 +51,13 @@ docs/use-case-diagram.png
 
 ## Diagrama de clases
 
-El diagrama UML **actualizado según las clases implementadas** puede editarse en [`hangman/docs/class-diagram.md`](hangman/docs/class-diagram.md). Muestra la sobrecarga de `getRandomWord()` y su método privado auxiliar; no incluye clases aún no implementadas.
+El diagrama UML **actualizado según las clases implementadas** puede editarse en [`hangman/docs/class-diagram.md`](hangman/docs/class-diagram.md). Muestra los paquetes `model` y `controller`, incluyendo `HangmanGame`, sus relaciones y la sobrecarga de `getRandomWord()`.
 
 ```mermaid
 classDiagram
     direction LR
 
-    class HangmanGame {
+    namespace controller {\n    class HangmanGame {
         +int MAX_ERRORS
         +int TOTAL_ROUNDS
         -WorkBank wordBank
@@ -98,7 +98,7 @@ classDiagram
         LOST
     }
 
-    class Word {
+    }\n\n    namespace model {\n    class Word {
         -String text
         -String clue
         -Category category
@@ -340,8 +340,8 @@ hangman/src/test/java/com/poo/hangman/model/
 ## Desde Apache NetBeans
 
 1. Abrir como proyecto Maven la carpeta `hangman/`, que contiene el archivo `pom.xml`.
-2. En el panel **Projects**, expandir **Test Packages → com.poo.hangman.model**.
-3. Para ejecutar una sola clase de pruebas, hacer clic derecho en `WordTest.java` o `WorkBankTest.java` y seleccionar **Test File**.
+2. En el panel **Projects**, expandir **Test Packages → com.poo.hangman.model** o **com.poo.hangman.controller**.
+3. Para ejecutar una sola clase de pruebas, hacer clic derecho en `WordTest.java`, `WorkBankTest.java` o `HangmanGameTest.java` y seleccionar **Test File**.
 4. Para ejecutar todas las pruebas, hacer clic derecho sobre el proyecto y seleccionar **Test** o **Test Project**.
 5. Revisar los resultados en **Test Results** y en la ventana **Output**.
 
@@ -367,7 +367,7 @@ mvn -Dtest=WordTest test
 mvn -Dtest=WorkBankTest test
 ```
 
-**Interpretar los resultados:** `BUILD SUCCESS` indica que Maven terminó correctamente; revisar también el número de pruebas ejecutadas y los valores `Failures` y `Errors`. Si aparece `BUILD FAILURE`, consultar el detalle de la prueba o error de compilación en `Output`.
+**Ejecutar únicamente las pruebas de HangmanGame:**\n\n```bash\nmvn -Dtest=HangmanGameTest test\n```\n\n**Interpretar los resultados:** `BUILD SUCCESS` indica que Maven terminó correctamente; revisar también el número de pruebas ejecutadas y los valores `Failures` y `Errors`. Si aparece `BUILD FAILURE`, consultar el detalle de la prueba o error de compilación en `Output`.
 
 ## Sincronización de la rama de desarrollo
 

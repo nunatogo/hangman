@@ -1,4 +1,9 @@
-package com.poo.hangman.model;
+package com.poo.hangman.controller;
+
+import com.poo.hangman.model.Category;
+import com.poo.hangman.model.Level;
+import com.poo.hangman.model.Word;
+import com.poo.hangman.model.WorkBank;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;

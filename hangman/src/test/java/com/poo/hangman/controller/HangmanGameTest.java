@@ -1,4 +1,9 @@
-package com.poo.hangman.model;
+package com.poo.hangman.controller;
+
+import com.poo.hangman.model.Category;
+import com.poo.hangman.model.Level;
+import com.poo.hangman.model.Word;
+import com.poo.hangman.model.WorkBank;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

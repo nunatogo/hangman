@@ -1,7 +1,7 @@
 # Documentación técnica — HangmanGame (sin pistas)
 
-## Responsabilidad
-Gestiona el estado de una partida de tres rondas de ahorcado y se apoya en `WorkBank` para seleccionar una palabra en cada nivel. No muestra interfaz gráfica ni implementa todavía las tres pistas.
+**Paquete:** `com.poo.hangman.controller` (controlador MVC).\n\n## Responsabilidad
+Gestiona el estado de una partida de tres rondas de ahorcado y se apoya en `WorkBank` para seleccionar una palabra en cada nivel. Coordina el modelo sin mostrar interfaz gráfica; las tres pistas siguen pendientes.
 
 ## Reglas de juego
 - **Ronda 1:** `FACIL`. Si gana, puede avanzar a la ronda 2.
@@ -56,7 +56,7 @@ if (game.getRoundStatus() == HangmanGame.RoundStatus.WON) {
 ```
 
 ## Pruebas
-`src/test/java/com/poo/hangman/model/HangmanGameTest.java` contiene diez métodos de prueba JUnit 5. Se ejecutan desde NetBeans (Test File) o mediante `mvn -Dtest=HangmanGameTest test` desde la carpeta con `pom.xml`.
+`src/test/java/com/poo/hangman/controller/HangmanGameTest.java` contiene diez métodos de prueba JUnit 5. Se ejecutan desde NetBeans (Test File) o mediante `mvn -Dtest=HangmanGameTest test` desde la carpeta con `pom.xml`.
 
 ## Pendientes intencionados
 - Pista 1: categoría de la palabra.

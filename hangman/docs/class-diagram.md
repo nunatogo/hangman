@@ -1,12 +1,12 @@
 # Diagrama de clases UML — estado implementado
 
-Diagrama actualizado con las clases Java existentes en `com.poo.hangman.model` de la rama `nunatogo-desa`. Este archivo utiliza Mermaid para que el diagrama se pueda editar como texto y GitHub lo renderice automáticamente.
+Diagrama actualizado con las clases Java existentes en los paquetes `com.poo.hangman.model` y `com.poo.hangman.controller` de la rama `nunatogo-desa`. Este archivo utiliza Mermaid para que el diagrama se pueda editar como texto y GitHub lo renderice automáticamente.
 
 ```mermaid
 classDiagram
     direction LR
 
-    class HangmanGame {
+    namespace controller {\n    class HangmanGame {
         +int MAX_ERRORS
         +int TOTAL_ROUNDS
         -WorkBank wordBank
@@ -47,7 +47,7 @@ classDiagram
         LOST
     }
 
-    class Word {
+    }\n\n    namespace model {\n    class Word {
         -String text
         -String clue
         -Category category
