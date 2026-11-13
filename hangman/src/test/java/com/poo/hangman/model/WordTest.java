@@ -56,6 +56,16 @@ class WordTest {
     }
 
     @Test
+    void changingTextRecalculatesLevelAutomatically() {
+        Word word = new Word("GATO", Category.ANIMALES, "Pista");
+        word.setText("ELEFANTES");
+        assertAll(
+            () -> assertEquals("ELEFANTES", word.getText()),
+            () -> assertEquals(Level.DIFICIL, word.getLevel())
+        );
+    }
+
+    @Test
     void updatesClue() {
         Word word = new Word("GATO", Category.ANIMALES, "Pista");
         word.setClue("Animal que maulla");
