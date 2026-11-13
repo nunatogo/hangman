@@ -76,6 +76,17 @@ class HangmanGameTest {
     }
 
     @Test
+    void startGameCanSelectLevelBeforeCurrentWordExists() {
+        HangmanGame game = new HangmanGame();
+        assertThrows(IllegalStateException.class, game::getCurrentLevel);
+
+        assertDoesNotThrow(game::startGame);
+        assertEquals(Level.FACIL, game.getCurrentLevel());
+        assertTrue(game.isGameStarted());
+        assertFalse(game.getMaskedWord().isBlank());
+    }
+
+    @Test
     void correctLetterRevealsWordWithoutConsumingAttempts() throws Exception {
         HangmanGame game = newGame();
         setWord(game, "GATO");

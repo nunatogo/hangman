@@ -193,7 +193,8 @@ public class HangmanGame {
 
     /** @return nivel correspondiente a la ronda actual */
     public Level getCurrentLevel() {
-        requireStarted();
+        // Se consulta durante startRound(), antes de asignar currentWord.
+        // Por eso solo se valida el número de ronda y no la palabra actual.
         return switch (roundNumber) {
             case 1 -> Level.FACIL;
             case 2 -> Level.MEDIO;
