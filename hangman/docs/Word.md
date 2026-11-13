@@ -39,6 +39,15 @@ La clase utiliza las enumeraciones `Category` y `Level`. No implementa por sí m
 | `setLevel()` | `void` | Recalcular explícitamente el nivel |
 | `assignLevel()` | `Level` | Método privado que clasifica la longitud |
 
+## Validaciones de entrada
+- Solo se aceptan palabras individuales formadas por letras, incluidas letras con tilde y la Ñ.
+- Se eliminan los espacios al principio y final y el texto se convierte a mayúsculas usando `Locale.ROOT`.
+- Se rechazan textos nulos, vacíos, compuestos, con números o guiones mediante `IllegalArgumentException`.
+- La categoría debe ser diferente de `null` (se utiliza `Objects.requireNonNull`).
+- La pista no puede ser nula ni estar vacía; se eliminan espacios externos.
+- `setText()` recalcula automáticamente la dificultad después de validar.
+- La normalización no elimina tildes; la lógica del juego deberá comparar letras de forma coherente.
+
 ## Reglas de clasificación
 
 | Longitud de la palabra | Nivel |
@@ -69,11 +78,10 @@ System.out.println(word.getLevel()); // DIFICIL
 
 Archivo: `src/test/java/com/poo/hangman/model/WordTest.java` (JUnit 5).
 
-Los diez métodos de prueba cubren: inicialización del constructor, niveles fácil/medio/difícil, valores límite, modificación del texto, recálculo automático del nivel, cambio de pista, cambio de categoría y recálculo explícito.
+Los quince métodos de prueba cubren: inicialización del constructor, niveles fácil/medio/difícil, valores límite, modificación del texto, recálculo automático del nivel, cambio de pista, cambio de categoría y recálculo explícito.
 
 En NetBeans, abrir el proyecto Maven y usar **Test Project** o **Test File** sobre `WordTest.java`; también se puede ejecutar `mvn test` en la carpeta que contiene `pom.xml`.
 
 ## Consideraciones
-- La aplicación debe proporcionar un texto no nulo: el cálculo actual usa `text.length()`. Todavía no se validan entradas nulas ni cadenas vacías.
-- Si se introducen palabras con espacios, la longitud también contará esos caracteres; se deberá definir cómo tratarlos al asignar niveles.
+- No se permiten palabras compuestas ni textos con espacios internos. La clasificación se calcula sobre el texto normalizado y validado.
 - Los nombres de clases y métodos están en inglés, mientras que la documentación permanece en español.
