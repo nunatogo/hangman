@@ -1,7 +1,14 @@
 # Documentación técnica — HangmanGame (sin pistas)
 
-**Paquete:** `com.poo.hangman.controller` (controlador MVC).\n\n## Responsabilidad
+**Paquete:** `com.poo.hangman.controller` (controlador MVC).
+
+## Responsabilidad
 Gestiona el estado de una partida de tres rondas de ahorcado y se apoya en `WorkBank` para seleccionar una palabra en cada nivel. Coordina el modelo sin mostrar interfaz gráfica; las tres pistas siguen pendientes.
+
+## Ciclo de vida
+El constructor sin parámetros crea el banco de palabras (`WorkBank`) y deja `currentWord`, `correctLetters` e `incorrectLetters` en `null`, además de `roundNumber = 0`, `wrongAttempts = 0` y `roundStatus = EN_CURSO`. No selecciona una palabra. Para comenzar se debe llamar a `startGame()` o `startGame(Category)`, que preparan la primera ronda y las colecciones. Los métodos que requieren una ronda activa rechazan su uso antes del inicio.
+
+**Nota sobre el nombre:** la clase del banco existente en el proyecto se llama `WorkBank`, no `WordBank`; se conserva su nombre para no cambiar otras clases sin solicitarlo.
 
 ## Reglas de juego
 - **Ronda 1:** `FACIL`. Si gana, puede avanzar a la ronda 2.
@@ -10,16 +17,16 @@ Gestiona el estado de una partida de tres rondas de ahorcado y se apoya en `Work
 - Hay **7 errores** disponibles por ronda. Cada palabra nueva reinicia errores y letras usadas.
 - Una letra repetida no consume errores adicionales.
 - Cuando se pierde una ronda, `isGameLost()` devuelve `true` y no se puede avanzar.
-- Se mantiene la modalidad inicial: categoría fija para las tres rondas o cualquier categoría en cada ronda. En el modo aleatorio, una categoría podría repetirse.
+- La categoría se define al invocar `startGame()` o `startGame(Category)` y se mantiene durante las tres rondas. En el modo aleatorio, una categoría podría repetirse.
 - Las pistas están **pendientes** y no se contemplan todavía en el cálculo de la victoria.
 
 ## API pública
 
 | Método | Retorno | Función |
 |---|---|---|
-| `HangmanGame()` | constructor | Iniciar con categorías aleatorias |
-| `HangmanGame(Category)` | constructor | Iniciar con categoría fija |
-| `HangmanGame(WorkBank, Category)` | constructor | Inyectar un banco para pruebas o reutilización (`null` indica categoría aleatoria) |
+| `HangmanGame()` | constructor | Inicializar atributos en estado base, sin comenzar la partida |
+| `startGame()` | `void` | Comenzar desde la ronda fácil con categoría aleatoria |
+| `startGame(Category)` | `void` | Comenzar desde la ronda fácil con categoría seleccionada |
 | `guessLetter(char)` | `boolean` | Verificar la letra; retorna si existe en la palabra |
 | `advanceRound()` | `boolean` | Avanzar tras ganar; retorna `false` al completar la tercera ronda |
 | `restartGame()` | `void` | Reiniciar desde la primera ronda |
@@ -54,7 +61,8 @@ import com.poo.hangman.controller.HangmanGame;
 import com.poo.hangman.model.Category;
 import com.poo.hangman.model.RoundStatus;
 
-HangmanGame game = new HangmanGame(Category.ANIMALES);
+HangmanGame game = new HangmanGame();
+game.startGame(Category.ANIMALES);
 boolean isCorrect = game.guessLetter('A');
 System.out.println(game.getMaskedWord());
 System.out.println(game.getRemainingAttempts());
@@ -64,7 +72,7 @@ if (game.getRoundStatus() == RoundStatus.GANADA) {
 ```
 
 ## Pruebas
-`src/test/java/com/poo/hangman/controller/HangmanGameTest.java` contiene diez métodos de prueba JUnit 5. Se ejecutan desde NetBeans (Test File) o mediante `mvn -Dtest=HangmanGameTest test` desde la carpeta con `pom.xml`.
+`src/test/java/com/poo/hangman/controller/HangmanGameTest.java` contiene once métodos de prueba JUnit 5. Se ejecutan desde NetBeans (Test File) o mediante `mvn -Dtest=HangmanGameTest test` desde la carpeta con `pom.xml`.
 
 ## Pendientes intencionados
 - Pista 1: categoría de la palabra.

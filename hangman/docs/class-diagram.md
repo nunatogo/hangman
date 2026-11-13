@@ -19,8 +19,8 @@ classDiagram
         -Set~Character~ correctLetters
         -Set~Character~ incorrectLetters
         +HangmanGame()
-        +HangmanGame(Category category)
-        +HangmanGame(WorkBank wordBank, Category category)
+        +startGame() void
+        +startGame(Category category) void
         +guessLetter(char letter) boolean
         +advanceRound() boolean
         +restartGame() void
@@ -39,6 +39,7 @@ classDiagram
         +getRevealedWord() String
         -startRound() void
         -allLettersGuessed() boolean
+        -requireStarted() void
     }
 
     }

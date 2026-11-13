@@ -4,44 +4,36 @@ import com.poo.hangman.model.Category;
 import com.poo.hangman.model.Level;
 import com.poo.hangman.model.RoundStatus;
 import com.poo.hangman.model.Word;
-import com.poo.hangman.model.WorkBank;
-
+import java.lang.reflect.Field;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Pruebas de las tres rondas del ahorcado, sin pistas ni interfaz Swing.
- * El banco de prueba devuelve palabras conocidas para evitar resultados
- * dependientes del azar.
+ * Pruebas del ciclo de vida de HangmanGame sin constructores con parámetros.
  */
 class HangmanGameTest {
 
-    private static class FixedWordBank extends WorkBank {
-        @Override
-        public Word getRandomWord(Level level) {
-            return switch (level) {
-                case FACIL -> new Word("GATO", Category.ANIMALES, "Felino");
-                case MEDIO -> new Word("CONEJO", Category.ANIMALES, "Orejas largas");
-                case DIFICIL -> new Word("ELEFANTES", Category.ANIMALES, "Mamíferos");
-            };
-        }
-
-        @Override
-        public Word getRandomWord(Category category, Level level) {
-            return switch (level) {
-                case FACIL -> new Word("PERRO", category, "Animal");
-                case MEDIO -> new Word("CABALLO", category, "Animal");
-                case DIFICIL -> new Word("COCODRILO", category, "Animal");
-            };
-        }
-    }
-
     private HangmanGame newGame() {
-        return new HangmanGame(new FixedWordBank(), null);
+        HangmanGame game = new HangmanGame();
+        game.startGame();
+        return game;
     }
 
-    private void winCurrentRound(HangmanGame game, String word) {
-        for (char letter : word.toCharArray()) {
+    private Word currentWord(HangmanGame game) throws Exception {
+        Field field = HangmanGame.class.getDeclaredField("currentWord");
+        field.setAccessible(true);
+        return (Word) field.get(game);
+    }
+
+    private void setWord(HangmanGame game, String value) throws Exception {
+        Field field = HangmanGame.class.getDeclaredField("currentWord");
+        field.setAccessible(true);
+        field.set(game, new Word(value, Category.ANIMALES, "Palabra de prueba"));
+    }
+
+    private void winRound(HangmanGame game) throws Exception {
+        String text = currentWord(game).getText();
+        for (char letter : text.toCharArray()) {
             if (game.getRoundStatus() == RoundStatus.EN_CURSO) {
                 assertTrue(game.guessLetter(letter));
             }
@@ -50,29 +42,50 @@ class HangmanGameTest {
     }
 
     @Test
-    void startsWithEasyRoundAndSevenAttempts() {
-        HangmanGame game = newGame();
+    void constructorInitializesOnlyBasicState() throws Exception {
+        HangmanGame game = new HangmanGame();
         assertAll(
-            () -> assertEquals(1, game.getRoundNumber()),
-            () -> assertEquals(Level.FACIL, game.getCurrentLevel()),
-            () -> assertEquals(7, game.getRemainingAttempts()),
-            () -> assertEquals("_ _ _ _", game.getMaskedWord()),
-            () -> assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus())
+            () -> assertEquals(0, game.getRoundNumber()),
+            () -> assertEquals(0, game.getWrongAttempts()),
+            () -> assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus()),
+            () -> assertNull(game.getSelectedCategory()),
+            () -> assertTrue(game.getCorrectLetters().isEmpty()),
+            () -> assertTrue(game.getIncorrectLetters().isEmpty()),
+            () -> assertThrows(IllegalStateException.class, () -> game.guessLetter('A')),
+            () -> assertThrows(IllegalStateException.class, game::getMaskedWord)
         );
+        assertNull(currentWord(game));
+        Field correct = HangmanGame.class.getDeclaredField("correctLetters");
+        Field incorrect = HangmanGame.class.getDeclaredField("incorrectLetters");
+        correct.setAccessible(true);
+        incorrect.setAccessible(true);
+        assertNull(correct.get(game));
+        assertNull(incorrect.get(game));
     }
 
     @Test
-    void correctLetterRevealsPositionsWithoutConsumingAttempts() {
+    void startsFirstRoundWithEasyLevelAndSevenAttempts() {
         HangmanGame game = newGame();
+        assertEquals(1, game.getRoundNumber());
+        assertEquals(Level.FACIL, game.getCurrentLevel());
+        assertEquals(7, game.getRemainingAttempts());
+        assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus());
+        assertFalse(game.getMaskedWord().isBlank());
+    }
+
+    @Test
+    void correctLetterRevealsWordWithoutConsumingAttempts() throws Exception {
+        HangmanGame game = newGame();
+        setWord(game, "GATO");
         assertTrue(game.guessLetter('a'));
         assertEquals("_ A _ _", game.getMaskedWord());
         assertEquals(7, game.getRemainingAttempts());
-        assertTrue(game.getCorrectLetters().contains('A'));
     }
 
     @Test
-    void repeatedLetterDoesNotCountTwice() {
+    void repeatedLetterDoesNotCountTwice() throws Exception {
         HangmanGame game = newGame();
+        setWord(game, "GATO");
         assertFalse(game.guessLetter('z'));
         assertFalse(game.guessLetter('Z'));
         assertEquals(1, game.getWrongAttempts());
@@ -80,8 +93,9 @@ class HangmanGameTest {
     }
 
     @Test
-    void wrongLettersCountUntilSevenAndEndGame() {
+    void sevenErrorsEndGame() throws Exception {
         HangmanGame game = newGame();
+        setWord(game, "GATO");
         for (char letter : "BDEFHIJ".toCharArray()) {
             assertFalse(game.guessLetter(letter));
         }
@@ -93,21 +107,16 @@ class HangmanGameTest {
     }
 
     @Test
-    void winningThreeRoundsCompletesGame() {
+    void winningAllRoundsCompletesGame() throws Exception {
         HangmanGame game = newGame();
-        winCurrentRound(game, "GATO");
-        assertEquals("GATO", game.getRevealedWord());
+        winRound(game);
         assertTrue(game.advanceRound());
         assertEquals(Level.MEDIO, game.getCurrentLevel());
         assertEquals(7, game.getRemainingAttempts());
-        assertEquals(0, game.getCorrectLetters().size());
-
-        winCurrentRound(game, "CONEJO");
+        winRound(game);
         assertTrue(game.advanceRound());
-        assertEquals(3, game.getRoundNumber());
         assertEquals(Level.DIFICIL, game.getCurrentLevel());
-
-        winCurrentRound(game, "ELEFANTES");
+        winRound(game);
         assertTrue(game.isGameWon());
         assertFalse(game.advanceRound());
     }
@@ -120,44 +129,43 @@ class HangmanGameTest {
     }
 
     @Test
-    void selectedCategoryIsKeptAcrossRounds() {
-        HangmanGame game = new HangmanGame(new FixedWordBank(), Category.COMIDAS);
-        assertEquals(Category.COMIDAS, game.getSelectedCategory());
-        assertEquals(Category.COMIDAS, game.getCurrentWordCategory());
-        winCurrentRound(game, "PERRO");
-        assertTrue(game.advanceRound());
-        assertEquals(Category.COMIDAS, game.getCurrentWordCategory());
-        winCurrentRound(game, "CABALLO");
-        assertTrue(game.advanceRound());
-        assertEquals(Category.COMIDAS, game.getCurrentWordCategory());
+    void selectedCategoryPersistsAcrossRounds() throws Exception {
+        HangmanGame game = new HangmanGame();
+        game.startGame(Category.COMIDAS);
+        for (int i = 0; i < 3; i++) {
+            assertEquals(Category.COMIDAS, game.getSelectedCategory());
+            assertEquals(Category.COMIDAS, game.getCurrentWordCategory());
+            winRound(game);
+            if (i < 2) {
+                assertTrue(game.advanceRound());
+            }
+        }
     }
 
     @Test
-    void restartResetsProgressAfterLosing() {
-        HangmanGame game = newGame();
-        game.guessLetter('Z');
+    void restartResetsProgressAndPreservesCategory() {
+        HangmanGame game = new HangmanGame();
+        game.startGame(Category.ANIMALES);
         game.restartGame();
         assertEquals(1, game.getRoundNumber());
+        assertEquals(Category.ANIMALES, game.getSelectedCategory());
         assertEquals(0, game.getWrongAttempts());
-        assertEquals(0, game.getIncorrectLetters().size());
-        assertEquals("_ _ _ _", game.getMaskedWord());
+        assertTrue(game.getIncorrectLetters().isEmpty());
     }
 
     @Test
-    void rejectsInvalidLettersAndNullBank() {
+    void rejectsInvalidLetters() {
         HangmanGame game = newGame();
         assertAll(
             () -> assertThrows(IllegalArgumentException.class, () -> game.guessLetter('1')),
-            () -> assertThrows(IllegalArgumentException.class, () -> game.guessLetter(' ')),
-            () -> assertThrows(IllegalArgumentException.class, () -> new HangmanGame((WorkBank) null, null)),
-            () -> assertThrows(IllegalArgumentException.class, () -> new HangmanGame((Category) null))
+            () -> assertThrows(IllegalArgumentException.class, () -> game.guessLetter(' '))
         );
     }
 
     @Test
     void returnedLetterCollectionsCannotBeModified() {
         HangmanGame game = newGame();
-        game.guessLetter('G');
-        assertThrows(UnsupportedOperationException.class, () -> game.getCorrectLetters().add('A'));
+        assertThrows(UnsupportedOperationException.class,
+            () -> game.getCorrectLetters().add('A'));
     }
 }

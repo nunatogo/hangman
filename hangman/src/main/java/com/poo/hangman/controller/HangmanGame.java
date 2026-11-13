@@ -26,9 +26,9 @@ public class HangmanGame {
     public static final int TOTAL_ROUNDS = 3;
 
     private final WorkBank wordBank;
-    private final Category selectedCategory;
-    private final Set<Character> correctLetters = new LinkedHashSet<>();
-    private final Set<Character> incorrectLetters = new LinkedHashSet<>();
+    private Category selectedCategory;
+    private Set<Character> correctLetters;
+    private Set<Character> incorrectLetters;
 
     private Word currentWord;
     private int roundNumber;
@@ -36,57 +36,59 @@ public class HangmanGame {
     private RoundStatus roundStatus;
 
     /**
-     * Crea una partida de categorías aleatorias.
+     * Inicializa únicamente el estado base, sin seleccionar una palabra.
+     * La primera ronda se prepara mediante startGame().
      */
     public HangmanGame() {
-        this(new WorkBank(), null);
+        this.wordBank = new WorkBank();
+        this.selectedCategory = null;
+        this.currentWord = null;
+        this.correctLetters = null;
+        this.incorrectLetters = null;
+        this.roundNumber = 0;
+        this.wrongAttempts = 0;
+        this.roundStatus = RoundStatus.EN_CURSO;
     }
 
     /**
-     * Crea una partida con categoría fija para las tres rondas.
-     *
-     * @param category categoría elegida, no nula
+     * Inicia una partida con categoría aleatoria en cada ronda.
      */
-    public HangmanGame(Category category) {
-        this(new WorkBank(), requireCategory(category));
+    public void startGame() {
+        startGame(null);
     }
 
     /**
-     * Constructor para reutilizar un banco; null permite cualquier categoría.
+     * Inicia una partida desde la ronda fácil con categoría fija o aleatoria.
      *
-     * @param wordBank banco de palabras
-     * @param category categoría fija, o null para todas las categorías
+     * @param category categoría fija; null significa cualquier categoría
      */
-    public HangmanGame(WorkBank wordBank, Category category) {
-        if (wordBank == null) {
-            throw new IllegalArgumentException("El banco de palabras no puede ser nulo");
-        }
-        this.wordBank = wordBank;
+    public void startGame(Category category) {
         this.selectedCategory = category;
-        restartGame();
-    }
-
-    private static Category requireCategory(Category category) {
-        if (category == null) {
-            throw new IllegalArgumentException("La categoría no puede ser nula");
-        }
-        return category;
+        this.roundNumber = 1;
+        startRound();
     }
 
     /**
-     * Inicia una nueva partida desde la primera ronda.
+     * Reinicia la partida conservando la modalidad de categoría seleccionada.
      */
-    public final void restartGame() {
-        roundNumber = 1;
-        startRound();
+    public void restartGame() {
+        startGame(this.selectedCategory);
     }
 
     /**
      * Inicia o reinicia el estado de la ronda actual.
      */
     private void startRound() {
-        correctLetters.clear();
-        incorrectLetters.clear();
+        if (correctLetters == null) {
+            correctLetters = new LinkedHashSet<>();
+        } else {
+            correctLetters.clear();
+        }
+        if (incorrectLetters == null) {
+            incorrectLetters = new LinkedHashSet<>();
+        } else {
+            incorrectLetters.clear();
+        }
         wrongAttempts = 0;
         roundStatus = RoundStatus.EN_CURSO;
         Level level = getCurrentLevel();
@@ -105,6 +107,7 @@ public class HangmanGame {
      * @throws IllegalStateException si la ronda ya terminó
      */
     public boolean guessLetter(char letter) {
+        requireStarted();
         if (roundStatus != RoundStatus.EN_CURSO) {
             throw new IllegalStateException("La ronda ya terminó");
         }
@@ -152,6 +155,7 @@ public class HangmanGame {
      * @throws IllegalStateException si la ronda no se ganó
      */
     public boolean advanceRound() {
+        requireStarted();
         if (roundStatus != RoundStatus.GANADA) {
             throw new IllegalStateException("Solo puedes avanzar después de ganar la ronda");
         }
@@ -165,6 +169,7 @@ public class HangmanGame {
 
     /** @return palabra oculta con guiones bajos y letras acertadas */
     public String getMaskedWord() {
+        requireStarted();
         StringBuilder masked = new StringBuilder();
         for (char letter : currentWord.getText().toCharArray()) {
             if (masked.length() > 0) {
@@ -182,6 +187,7 @@ public class HangmanGame {
 
     /** @return nivel correspondiente a la ronda actual */
     public Level getCurrentLevel() {
+        requireStarted();
         return switch (roundNumber) {
             case 1 -> Level.FACIL;
             case 2 -> Level.MEDIO;
@@ -212,12 +218,12 @@ public class HangmanGame {
 
     /** @return letras correctas sin permitir modificar el conjunto interno */
     public Set<Character> getCorrectLetters() {
-        return Collections.unmodifiableSet(correctLetters);
+        return correctLetters == null ? Collections.emptySet() : Collections.unmodifiableSet(correctLetters);
     }
 
     /** @return letras incorrectas sin permitir modificar el conjunto interno */
     public Set<Character> getIncorrectLetters() {
-        return Collections.unmodifiableSet(incorrectLetters);
+        return incorrectLetters == null ? Collections.emptySet() : Collections.unmodifiableSet(incorrectLetters);
     }
 
     /** @return true si se completaron exitosamente las tres rondas */
@@ -237,6 +243,7 @@ public class HangmanGame {
      * @throws IllegalStateException si la ronda aún está en curso
      */
     public String getRevealedWord() {
+        requireStarted();
         if (roundStatus == RoundStatus.EN_CURSO) {
             throw new IllegalStateException("La palabra todavía está oculta");
         }
@@ -245,6 +252,16 @@ public class HangmanGame {
 
     /** @return categoría real de la palabra de la ronda actual */
     public Category getCurrentWordCategory() {
+        requireStarted();
         return currentWord.getCategory();
     }
+    /**
+     * Evita utilizar una ronda antes de iniciar la partida.
+     */
+    private void requireStarted() {
+        if (currentWord == null || roundNumber == 0) {
+            throw new IllegalStateException("Primero debes iniciar la partida");
+        }
+    }
+
 }
