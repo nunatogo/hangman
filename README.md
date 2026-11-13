@@ -51,14 +51,69 @@ docs/use-case-diagram.png
 
 ## Diagrama de clases
 
-El siguiente diagrama representa la estructura de clases del sistema y las relaciones utilizadas para implementar los principios de Programación Orientada a Objetos.
+El diagrama UML **actualizado según las clases implementadas** puede editarse en [`hangman/docs/class-diagram.md`](hangman/docs/class-diagram.md). Muestra la sobrecarga de `getRandomWord()` y su método privado auxiliar; no incluye clases aún no implementadas.
 
-> <img width="1536" height="1024" alt="Diagrama UML del juego del ahorcado inglés" src="https://github.com/user-attachments/assets/f9d75293-3ba1-405b-aa0b-3e060f31c71c" />
+```mermaid
+classDiagram
+    direction LR
 
+    class Word {
+        -String text
+        -String clue
+        -Category category
+        -Level level
+        +Word(String text, Category category, String clue)
+        +getText() String
+        +getClue() String
+        +getCategory() Category
+        +getLevel() Level
+        +setText(String text) void
+        +setClue(String clue) void
+        +setCategory(Category category) void
+        +setLevel() void
+        -assignLevel() Level
+    }
 
-```text
-docs/class-diagram.png
+    class WorkBank {
+        -ArrayList~Word~ words
+        +WorkBank()
+        -loadWords() void
+        -loadAnimals() void
+        -loadCountries() void
+        -loadSports() void
+        -loadObjects() void
+        -loadFoods() void
+        -load(String text, Category category, String clue) void
+        +getRandomWord(Level level) Word
+        +getRandomWord(Category category, Level level) Word
+        -selectRandomWord(Category category, Level level) Word
+        +getTotalWords() int
+    }
+
+    class Category {
+        <<enumeration>>
+        ANIMALES
+        PAISES
+        DEPORTES
+        OBJETOS
+        COMIDAS
+    }
+
+    class Level {
+        <<enumeration>>
+        FACIL
+        MEDIO
+        DIFICIL
+    }
+
+    WorkBank "1" *-- "0..*" Word : almacena
+    Word --> Category : pertenece a
+    Word --> Level : dificultad
+    WorkBank ..> Category : filtra por
+    WorkBank ..> Level : filtra por
 ```
+
+> El PNG anterior (`hangman/src/main/java/docs/class-diagram.png`) se conserva como referencia histórica, pero la versión vigente y editable es el diagrama Mermaid anterior.
 
 Las clases, atributos y métodos del proyecto se encuentran nombrados en **inglés**, de acuerdo con la convención utilizada durante el desarrollo.
 
