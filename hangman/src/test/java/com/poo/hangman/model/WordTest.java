@@ -86,4 +86,54 @@ class WordTest {
         word.setLevel();
         assertEquals(Level.DIFICIL, word.getLevel());
     }
+    @Test
+    void normalizesTextToUppercase() {
+        Word word = new Word("  conejo  ", Category.ANIMALES, "Orejas largas");
+        assertEquals("CONEJO", word.getText());
+        assertEquals(Level.MEDIO, word.getLevel());
+    }
+
+    @Test
+    void supportsAccentedLetters() {
+        Word word = new Word("águila", Category.ANIMALES, "Ave rapaz");
+        assertEquals("ÁGUILA", word.getText());
+        assertEquals(Level.MEDIO, word.getLevel());
+    }
+
+    @Test
+    void rejectsNullEmptyAndCompoundWords() {
+        assertAll(
+            () -> assertThrows(IllegalArgumentException.class, () -> new Word(null, Category.ANIMALES, "Pista")),
+            () -> assertThrows(IllegalArgumentException.class, () -> new Word("  ", Category.ANIMALES, "Pista")),
+            () -> assertThrows(IllegalArgumentException.class, () -> new Word("COSTA RICA", Category.PAISES, "Pista")),
+            () -> assertThrows(IllegalArgumentException.class, () -> new Word("GATO-NEGRO", Category.ANIMALES, "Pista")),
+            () -> assertThrows(IllegalArgumentException.class, () -> new Word("GATO3", Category.ANIMALES, "Pista"))
+        );
+    }
+
+    @Test
+    void rejectsInvalidMetadata() {
+        assertAll(
+            () -> assertThrows(NullPointerException.class, () -> new Word("PERRO", null, "Pista")),
+            () -> assertThrows(IllegalArgumentException.class, () -> new Word("PERRO", Category.ANIMALES, null)),
+            () -> assertThrows(IllegalArgumentException.class, () -> new Word("PERRO", Category.ANIMALES, " "))
+        );
+    }
+
+    @Test
+    void settersRejectInvalidValuesWithoutChangingExistingData() {
+        Word word = new Word("GATO", Category.ANIMALES, "Pista");
+        assertAll(
+            () -> assertThrows(IllegalArgumentException.class, () -> word.setText("DOS PALABRAS")),
+            () -> assertThrows(NullPointerException.class, () -> word.setCategory(null)),
+            () -> assertThrows(IllegalArgumentException.class, () -> word.setClue(" "))
+        );
+        assertAll(
+            () -> assertEquals("GATO", word.getText()),
+            () -> assertEquals(Category.ANIMALES, word.getCategory()),
+            () -> assertEquals("Pista", word.getClue()),
+            () -> assertEquals(Level.FACIL, word.getLevel())
+        );
+    }
+
 }
