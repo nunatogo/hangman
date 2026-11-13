@@ -96,7 +96,13 @@ classDiagram
         DIFICIL
     }
 
-    HangmanGame --> WorkBank : selecciona palabra\n    HangmanGame --> Word : ronda actual\n    HangmanGame --> RoundStatus : estado\n    HangmanGame ..> Level : progresión\n    WorkBank "1" *-- "0..*" Word : almacena
+    }
+
+    HangmanGame --> WorkBank : selecciona palabra
+    HangmanGame --> Word : ronda actual
+    HangmanGame --> RoundStatus : estado
+    HangmanGame ..> Level : progresión
+    WorkBank "1" *-- "0..*" Word : almacena
     Word --> Category : pertenece a
     Word --> Level : dificultad
     WorkBank ..> Category : filtra por
