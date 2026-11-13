@@ -80,7 +80,7 @@ class HangmanGameTest {
         HangmanGame game = new HangmanGame();
         assertThrows(IllegalStateException.class, game::getCurrentLevel);
 
-        assertDoesNotThrow(game::startGame);
+        assertDoesNotThrow(() -> game.startGame());
         assertEquals(Level.FACIL, game.getCurrentLevel());
         assertTrue(game.isGameStarted());
         assertFalse(game.getMaskedWord().isBlank());
