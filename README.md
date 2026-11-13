@@ -51,14 +51,69 @@ docs/use-case-diagram.png
 
 ## Diagrama de clases
 
-El siguiente diagrama representa la estructura de clases del sistema y las relaciones utilizadas para implementar los principios de Programación Orientada a Objetos.
+El diagrama UML **actualizado según las clases implementadas** puede editarse en [`hangman/docs/class-diagram.md`](hangman/docs/class-diagram.md). Muestra la sobrecarga de `getRandomWord()` y su método privado auxiliar; no incluye clases aún no implementadas.
 
-> <img width="1536" height="1024" alt="Diagrama UML del juego del ahorcado inglés" src="https://github.com/user-attachments/assets/f9d75293-3ba1-405b-aa0b-3e060f31c71c" />
+```mermaid
+classDiagram
+    direction LR
 
+    class Word {
+        -String text
+        -String clue
+        -Category category
+        -Level level
+        +Word(String text, Category category, String clue)
+        +getText() String
+        +getClue() String
+        +getCategory() Category
+        +getLevel() Level
+        +setText(String text) void
+        +setClue(String clue) void
+        +setCategory(Category category) void
+        +setLevel() void
+        -assignLevel() Level
+    }
 
-```text
-docs/class-diagram.png
+    class WorkBank {
+        -ArrayList~Word~ words
+        +WorkBank()
+        -loadWords() void
+        -loadAnimals() void
+        -loadCountries() void
+        -loadSports() void
+        -loadObjects() void
+        -loadFoods() void
+        -load(String text, Category category, String clue) void
+        +getRandomWord(Level level) Word
+        +getRandomWord(Category category, Level level) Word
+        -selectRandomWord(Category category, Level level) Word
+        +getTotalWords() int
+    }
+
+    class Category {
+        <<enumeration>>
+        ANIMALES
+        PAISES
+        DEPORTES
+        OBJETOS
+        COMIDAS
+    }
+
+    class Level {
+        <<enumeration>>
+        FACIL
+        MEDIO
+        DIFICIL
+    }
+
+    WorkBank "1" *-- "0..*" Word : almacena
+    Word --> Category : pertenece a
+    Word --> Level : dificultad
+    WorkBank ..> Category : filtra por
+    WorkBank ..> Level : filtra por
 ```
+
+> El PNG anterior (`hangman/src/main/java/docs/class-diagram.png`) se conserva como referencia histórica, pero la versión vigente y editable es el diagrama Mermaid anterior.
 
 Las clases, atributos y métodos del proyecto se encuentran nombrados en **inglés**, de acuerdo con la convención utilizada durante el desarrollo.
 
@@ -231,21 +286,59 @@ Cada pista debe comportarse según las reglas definidas para la partida.
 
 # 🧪 Ejecución de pruebas automatizadas
 
-Si el proyecto incluye pruebas unitarias, estas se encontrarán dentro de:
+El proyecto utiliza **Maven**, **Java 17** y **JUnit 5**. Los archivos de pruebas unitarias actuales se encuentran en:
 
 ```text
-test/
+hangman/src/test/java/com/poo/hangman/model/
+├── WordTest.java
+└── WorkBankTest.java
 ```
 
-Las pruebas permitirán validar principalmente la lógica de:
+> Nota: la clase del banco de palabras se llama `WorkBank` (con **k** después de `Wor`), por lo que su prueba se llama `WorkBankTest`.
 
-```java
-HangmanGame
-WordBank
-Hint
+## Desde Apache NetBeans
+
+1. Abrir como proyecto Maven la carpeta `hangman/`, que contiene el archivo `pom.xml`.
+2. En el panel **Projects**, expandir **Test Packages → com.poo.hangman.model**.
+3. Para ejecutar una sola clase de pruebas, hacer clic derecho en `WordTest.java` o `WorkBankTest.java` y seleccionar **Test File**.
+4. Para ejecutar todas las pruebas, hacer clic derecho sobre el proyecto y seleccionar **Test** o **Test Project**.
+5. Revisar los resultados en **Test Results** y en la ventana **Output**.
+
+## Desde la terminal con Maven
+
+Abrir una terminal en la carpeta `hangman/` donde está `pom.xml` (no en la raíz exterior del repositorio).
+
+**Ejecutar todas las pruebas:**
+
+```bash
+mvn test
 ```
 
-La forma definitiva de ejecutarlas dependerá de la herramienta de pruebas configurada en el proyecto.
+**Ejecutar únicamente las pruebas de la clase Word:**
+
+```bash
+mvn -Dtest=WordTest test
+```
+
+**Ejecutar únicamente las pruebas de la clase WorkBank:**
+
+```bash
+mvn -Dtest=WorkBankTest test
+```
+
+**Interpretar los resultados:** `BUILD SUCCESS` indica que Maven terminó correctamente; revisar también el número de pruebas ejecutadas y los valores `Failures` y `Errors`. Si aparece `BUILD FAILURE`, consultar el detalle de la prueba o error de compilación en `Output`.
+
+## Sincronización de la rama de desarrollo
+
+Si el proyecto ya está clonado y no hay cambios locales sin guardar, actualizar las pruebas y el código de la rama de trabajo:
+
+```bash
+git fetch origin
+git switch nunatogo-desa
+git pull --ff-only origin nunatogo-desa
+```
+
+No ejecutar `git switch` si hay cambios locales que podrían sobrescribirse; guardarlos o revisarlos antes.
 
 ---
 

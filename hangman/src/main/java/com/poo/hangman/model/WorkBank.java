@@ -1,6 +1,8 @@
 package com.poo.hangman.model;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Banco de palabras que se van a utilizar dentro del juego
@@ -13,6 +15,11 @@ public class WorkBank {
 
     public WorkBank() {
         this.words = new ArrayList<Word>();
+        loadWords();
+    }
+
+    /** Carga las palabras de todas las categorías en el banco. */
+    private void loadWords() {
         loadAnimals();
         loadCountries();
         loadSports();
@@ -65,6 +72,7 @@ public class WorkBank {
     }
 
     private void loadCountries() {
+        load("PERU", Category.PAISES, "País andino cuya capital es Lima y donde se encuentra Machu Picchu");
         load("CHILE", Category.PAISES, "Territorio sudamericano extremadamente alargado junto al Océano Pacífico");
         load("IRAN", Category.PAISES, "Antiguo y milenario territorio que heredó la cultura de la antigua Persia");
         load("INDIA", Category.PAISES, "Colosal país del sur asiático hogar del majestuoso monumento Taj Mahal");
@@ -234,6 +242,81 @@ public class WorkBank {
         load("ESPAGUETI", Category.COMIDAS, "Variedad de pasta alimenticia con forma de cordones largos y finos");
     }
 
+    /**
+     * Selecciona una palabra aleatoria del nivel solicitado, sin restringir
+     * la categoría.
+     *
+     * @param level nivel de dificultad requerido
+     * @return una palabra aleatoria del nivel indicado
+     * @throws IllegalArgumentException si el nivel es nulo
+     * @throws NoSuchElementException si no hay palabras disponibles
+     */
+    public Word getRandomWord(Level level) {
+        return selectRandomWord(null, level);
+    }
+
+    /**
+     * Selecciona una palabra aleatoria de una categoría y nivel específicos.
+     *
+     * @param category categoría elegida por el jugador
+     * @param level nivel de dificultad requerido
+     * @return una palabra aleatoria que cumpla ambos criterios
+     * @throws IllegalArgumentException si la categoría o el nivel son nulos
+     * @throws NoSuchElementException si no hay palabras disponibles
+     */
+    public Word getRandomWord(Category category, Level level) {
+        if (category == null) {
+            throw new IllegalArgumentException("La categoría no puede ser nula");
+        }
+        return selectRandomWord(category, level);
+    }
+
+    /**
+     * Filtra internamente los candidatos y elige una palabra aleatoria.
+     * Una categoría nula indica que se acepta cualquiera (uso interno).
+     *
+     * @param category categoría requerida, o null para cualquiera
+     * @param level nivel de dificultad requerido
+     * @return una palabra aleatoria de los candidatos disponibles
+     */
+    private Word selectRandomWord(Category category, Level level) {
+        if (level == null) {
+            throw new IllegalArgumentException("El nivel no puede ser nulo");
+        }
+
+        ArrayList<Word> candidates = new ArrayList<>();
+        for (Word word : this.words) {
+            if (word.getLevel() == level
+                    && (category == null || word.getCategory() == category)) {
+                candidates.add(word);
+            }
+        }
+
+        if (candidates.isEmpty()) {
+            throw new NoSuchElementException(
+                    "No hay palabras disponibles para los criterios seleccionados");
+        }
+
+        int index = ThreadLocalRandom.current().nextInt(candidates.size());
+        return candidates.get(index);
+    }
+
+    /**
+     * Devuelve la cantidad total de palabras disponibles.
+     *
+     * @return número de palabras del banco
+     */
+    public int getTotalWords() {
+        return this.words.size();
+    }
+
+    /**
+     * Agrega una nueva palabra al banco de palabras.
+     *
+     * @param text texto de la palabra
+     * @param category categoría a la que pertenece
+     * @param clue pista relacionada con la palabra
+     */
     private void load(String text, Category category, String clue) {
         this.words.add(new Word(text, category, clue));
     }
