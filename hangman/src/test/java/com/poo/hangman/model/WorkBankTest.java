@@ -1,78 +1,71 @@
 package com.poo.hangman.model;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Pruebas del banco de palabras y sus filtros internos.
- * Los filtros se invocan mediante reflexión porque fueron solicitados
- * explícitamente como métodos privados.
+ * Pruebas unitarias de la carga y selección aleatoria de WorkBank.
+ * Se comprueba su API pública, sin acceder a los métodos privados.
  */
 class WorkBankTest {
 
     @Test
     void loadsExactlyTwoHundredWords() {
-        WorkBank bank = new WorkBank();
-        assertEquals(200, bank.getTotalWords());
-    }
-
-    @SuppressWarnings("unchecked")
-    private ArrayList<Word> filter(String name, Class<?>[] parameterTypes, Object... values)
-            throws ReflectiveOperationException {
-        WorkBank bank = new WorkBank();
-        Method method = WorkBank.class.getDeclaredMethod(name, parameterTypes);
-        method.setAccessible(true);
-        return (ArrayList<Word>) method.invoke(bank, values);
+        assertEquals(200, new WorkBank().getTotalWords());
     }
 
     @Test
-    void wordsByLevelContainOnlyRequestedLevel() throws Exception {
-        int total = 0;
+    void randomWordAlwaysMatchesRequestedLevel() {
+        WorkBank bank = new WorkBank();
         for (Level level : Level.values()) {
-            ArrayList<Word> selected = filter("getWordsByLevel", new Class<?>[]{Level.class}, level);
-            assertTrue(selected.stream().allMatch(word -> word.getLevel() == level));
-            total += selected.size();
+            for (int i = 0; i < 100; i++) {
+                Word word = bank.getRandomWord(level);
+                assertNotNull(word);
+                assertEquals(level, word.getLevel());
+            }
         }
-        assertEquals(200, total);
     }
 
     @Test
-    void wordsByCategoryAndLevelMatchBothFilters() throws Exception {
-        int total = 0;
+    void randomWordAlwaysMatchesCategoryAndLevel() {
+        WorkBank bank = new WorkBank();
         for (Category category : Category.values()) {
             for (Level level : Level.values()) {
-                ArrayList<Word> selected = filter("getWordsByCategoryAndLevel",
-                        new Class<?>[]{Category.class, Level.class}, category, level);
-                assertTrue(selected.stream().allMatch(word ->
-                        word.getCategory() == category && word.getLevel() == level));
-                total += selected.size();
+                for (int i = 0; i < 20; i++) {
+                    Word word = bank.getRandomWord(category, level);
+                    assertNotNull(word);
+                    assertEquals(category, word.getCategory());
+                    assertEquals(level, word.getLevel());
+                }
             }
         }
-        assertEquals(200, total);
     }
 
     @Test
-    void countriesCategoryHasThirtyNineWords() throws Exception {
-        int total = 0;
-        for (Level level : Level.values()) {
-            total += filter("getWordsByCategoryAndLevel",
-                    new Class<?>[]{Category.class, Level.class}, Category.PAISES, level).size();
-        }
-        assertEquals(39, total);
+    void rejectsNullLevel() {
+        WorkBank bank = new WorkBank();
+        assertAll(
+            () -> assertThrows(IllegalArgumentException.class,
+                    () -> bank.getRandomWord((Level) null)),
+            () -> assertThrows(IllegalArgumentException.class,
+                    () -> bank.getRandomWord(Category.ANIMALES, null))
+        );
     }
 
     @Test
-    void wordsAreNotRepeated() throws Exception {
-        Set<String> all = new HashSet<>();
-        for (Level level : Level.values()) {
-            for (Word word : filter("getWordsByLevel", new Class<?>[]{Level.class}, level)) {
-                assertTrue(all.add(word.getText()), "Palabra duplicada: " + word.getText());
-            }
+    void rejectsNullCategory() {
+        WorkBank bank = new WorkBank();
+        assertThrows(IllegalArgumentException.class,
+                () -> bank.getRandomWord(null, Level.FACIL));
+    }
+
+    @Test
+    void selectionDoesNotChangeBankSize() {
+        WorkBank bank = new WorkBank();
+        for (int i = 0; i < 100; i++) {
+            bank.getRandomWord(Level.FACIL);
+            bank.getRandomWord(Category.ANIMALES, Level.MEDIO);
         }
-        assertEquals(200, all.size());
+        assertEquals(200, bank.getTotalWords());
     }
 }
