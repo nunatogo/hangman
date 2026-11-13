@@ -1,12 +1,16 @@
 package com.poo.hangman.model;
 
+import java.util.Locale;
+import java.util.Objects;
+
 /**
  * Representa una palabra del juego del ahorcado.
  *
  * <p>Almacena el texto que debe adivinarse, su categoría, una pista escrita
  * y el nivel de dificultad. El nivel se determina automáticamente a partir
  * de la longitud del texto: de 1 a 5 caracteres (FACIL), de 6 a 8 (MEDIO)
- * y 9 o más (DIFICIL).</p>
+ * y 9 o más (DIFICIL). Solo admite palabras individuales formadas
+ * por letras y las normaliza a mayúsculas.</p>
  *
  * <p>Esta clase encapsula los datos de una palabra y no gestiona los intentos
  * ni la interfaz gráfica del juego.</p>
@@ -35,10 +39,9 @@ public class Word {
      * @param clue pista escrita relacionada con la palabra
      */
     public Word(String text, Category category, String clue) {
-        this.text = text;
-        this.category = category;
-        this.clue = clue;
-        this.level = assignLevel();
+        setText(text);
+        setCategory(category);
+        setClue(clue);
     }
 
     /**
@@ -81,29 +84,39 @@ public class Word {
      * Actualiza el texto y recalcula el nivel para mantener ambos valores
      * coherentes.
      *
-     * @param text nuevo texto (no debe ser null)
+     * @param text palabra individual no vacía y sin espacios
      */
     public void setText(String text) {
-        this.text = text;
+        if (text == null || text.isBlank()) {
+            throw new IllegalArgumentException("La palabra no puede ser nula ni vacía");
+        }
+        String normalizedText = text.trim().toUpperCase(Locale.ROOT);
+        if (!normalizedText.matches("\\p{L}+")) {
+            throw new IllegalArgumentException("La palabra debe contener solo letras, sin espacios");
+        }
+        this.text = normalizedText;
         setLevel();
     }
 
     /**
      * Modifica la pista escrita.
      *
-     * @param clue nueva pista
+     * @param clue nueva pista no vacía
      */
     public void setClue(String clue) {
-        this.clue = clue;
+        if (clue == null || clue.isBlank()) {
+            throw new IllegalArgumentException("La pista no puede ser nula ni vacía");
+        }
+        this.clue = clue.trim();
     }
 
     /**
      * Modifica la categoría de la palabra.
      *
-     * @param category nueva categoría
+     * @param category nueva categoría no nula
      */
     public void setCategory(Category category) {
-        this.category = category;
+        this.category = Objects.requireNonNull(category, "La categoría no puede ser nula");
     }
 
     /**
