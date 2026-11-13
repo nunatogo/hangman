@@ -13,6 +13,11 @@ public class WorkBank {
 
     public WorkBank() {
         this.words = new ArrayList<Word>();
+        loadWords();
+    }
+
+    /** Carga las palabras de todas las categorías en el banco. */
+    private void loadWords() {
         loadAnimals();
         loadCountries();
         loadSports();
@@ -65,6 +70,7 @@ public class WorkBank {
     }
 
     private void loadCountries() {
+        load("PERU", Category.PAISES, "País andino cuya capital es Lima y donde se encuentra Machu Picchu");
         load("CHILE", Category.PAISES, "Territorio sudamericano extremadamente alargado junto al Océano Pacífico");
         load("IRAN", Category.PAISES, "Antiguo y milenario territorio que heredó la cultura de la antigua Persia");
         load("INDIA", Category.PAISES, "Colosal país del sur asiático hogar del majestuoso monumento Taj Mahal");
@@ -234,6 +240,63 @@ public class WorkBank {
         load("ESPAGUETI", Category.COMIDAS, "Variedad de pasta alimenticia con forma de cordones largos y finos");
     }
 
+    /**
+     * Obtiene palabras del nivel indicado sin modificar el banco original.
+     *
+     * @param level nivel de dificultad solicitado
+     * @return lista de palabras del nivel solicitado
+     * @throws IllegalArgumentException si el nivel es nulo
+     */
+    private ArrayList<Word> getWordsByLevel(Level level) {
+        if (level == null) {
+            throw new IllegalArgumentException("El nivel no puede ser nulo");
+        }
+        ArrayList<Word> result = new ArrayList<>();
+        for (Word word : this.words) {
+            if (word.getLevel() == level) {
+                result.add(word);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Obtiene palabras que coinciden con la categoría y el nivel indicados.
+     *
+     * @param category categoría solicitada
+     * @param level nivel de dificultad solicitado
+     * @return lista de palabras que cumplen ambos filtros
+     * @throws IllegalArgumentException si la categoría o el nivel son nulos
+     */
+    private ArrayList<Word> getWordsByCategoryAndLevel(Category category, Level level) {
+        if (category == null || level == null) {
+            throw new IllegalArgumentException("La categoría y el nivel no pueden ser nulos");
+        }
+        ArrayList<Word> result = new ArrayList<>();
+        for (Word word : this.words) {
+            if (word.getCategory() == category && word.getLevel() == level) {
+                result.add(word);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Devuelve la cantidad total de palabras disponibles.
+     *
+     * @return número de palabras del banco
+     */
+    public int getTotalWords() {
+        return this.words.size();
+    }
+
+    /**
+     * Agrega una nueva palabra al banco de palabras.
+     *
+     * @param text texto de la palabra
+     * @param category categoría a la que pertenece
+     * @param clue pista relacionada con la palabra
+     */
     private void load(String text, Category category, String clue) {
         this.words.add(new Word(text, category, clue));
     }
