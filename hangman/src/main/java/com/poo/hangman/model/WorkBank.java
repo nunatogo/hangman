@@ -1,6 +1,8 @@
 package com.poo.hangman.model;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Banco de palabras que se van a utilizar dentro del juego
@@ -241,44 +243,62 @@ public class WorkBank {
     }
 
     /**
-     * Obtiene palabras del nivel indicado sin modificar el banco original.
+     * Selecciona una palabra aleatoria del nivel solicitado, sin restringir
+     * la categoría.
      *
-     * @param level nivel de dificultad solicitado
-     * @return lista de palabras del nivel solicitado
+     * @param level nivel de dificultad requerido
+     * @return una palabra aleatoria del nivel indicado
      * @throws IllegalArgumentException si el nivel es nulo
+     * @throws NoSuchElementException si no hay palabras disponibles
      */
-    private ArrayList<Word> getWordsByLevel(Level level) {
-        if (level == null) {
-            throw new IllegalArgumentException("El nivel no puede ser nulo");
-        }
-        ArrayList<Word> result = new ArrayList<>();
-        for (Word word : this.words) {
-            if (word.getLevel() == level) {
-                result.add(word);
-            }
-        }
-        return result;
+    public Word getRandomWord(Level level) {
+        return selectRandomWord(null, level);
     }
 
     /**
-     * Obtiene palabras que coinciden con la categoría y el nivel indicados.
+     * Selecciona una palabra aleatoria de una categoría y nivel específicos.
      *
-     * @param category categoría solicitada
-     * @param level nivel de dificultad solicitado
-     * @return lista de palabras que cumplen ambos filtros
+     * @param category categoría elegida por el jugador
+     * @param level nivel de dificultad requerido
+     * @return una palabra aleatoria que cumpla ambos criterios
      * @throws IllegalArgumentException si la categoría o el nivel son nulos
+     * @throws NoSuchElementException si no hay palabras disponibles
      */
-    private ArrayList<Word> getWordsByCategoryAndLevel(Category category, Level level) {
-        if (category == null || level == null) {
-            throw new IllegalArgumentException("La categoría y el nivel no pueden ser nulos");
+    public Word getRandomWord(Category category, Level level) {
+        if (category == null) {
+            throw new IllegalArgumentException("La categoría no puede ser nula");
         }
-        ArrayList<Word> result = new ArrayList<>();
+        return selectRandomWord(category, level);
+    }
+
+    /**
+     * Filtra internamente los candidatos y elige una palabra aleatoria.
+     * Una categoría nula indica que se acepta cualquiera (uso interno).
+     *
+     * @param category categoría requerida, o null para cualquiera
+     * @param level nivel de dificultad requerido
+     * @return una palabra aleatoria de los candidatos disponibles
+     */
+    private Word selectRandomWord(Category category, Level level) {
+        if (level == null) {
+            throw new IllegalArgumentException("El nivel no puede ser nulo");
+        }
+
+        ArrayList<Word> candidates = new ArrayList<>();
         for (Word word : this.words) {
-            if (word.getCategory() == category && word.getLevel() == level) {
-                result.add(word);
+            if (word.getLevel() == level
+                    && (category == null || word.getCategory() == category)) {
+                candidates.add(word);
             }
         }
-        return result;
+
+        if (candidates.isEmpty()) {
+            throw new NoSuchElementException(
+                    "No hay palabras disponibles para los criterios seleccionados");
+        }
+
+        int index = ThreadLocalRandom.current().nextInt(candidates.size());
+        return candidates.get(index);
     }
 
     /**
