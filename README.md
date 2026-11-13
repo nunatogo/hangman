@@ -231,21 +231,59 @@ Cada pista debe comportarse según las reglas definidas para la partida.
 
 # 🧪 Ejecución de pruebas automatizadas
 
-Si el proyecto incluye pruebas unitarias, estas se encontrarán dentro de:
+El proyecto utiliza **Maven**, **Java 17** y **JUnit 5**. Los archivos de pruebas unitarias actuales se encuentran en:
 
 ```text
-test/
+hangman/src/test/java/com/poo/hangman/model/
+├── WordTest.java
+└── WorkBankTest.java
 ```
 
-Las pruebas permitirán validar principalmente la lógica de:
+> Nota: la clase del banco de palabras se llama `WorkBank` (con **k** después de `Wor`), por lo que su prueba se llama `WorkBankTest`.
 
-```java
-HangmanGame
-WordBank
-Hint
+## Desde Apache NetBeans
+
+1. Abrir como proyecto Maven la carpeta `hangman/`, que contiene el archivo `pom.xml`.
+2. En el panel **Projects**, expandir **Test Packages → com.poo.hangman.model**.
+3. Para ejecutar una sola clase de pruebas, hacer clic derecho en `WordTest.java` o `WorkBankTest.java` y seleccionar **Test File**.
+4. Para ejecutar todas las pruebas, hacer clic derecho sobre el proyecto y seleccionar **Test** o **Test Project**.
+5. Revisar los resultados en **Test Results** y en la ventana **Output**.
+
+## Desde la terminal con Maven
+
+Abrir una terminal en la carpeta `hangman/` donde está `pom.xml` (no en la raíz exterior del repositorio).
+
+**Ejecutar todas las pruebas:**
+
+```bash
+mvn test
 ```
 
-La forma definitiva de ejecutarlas dependerá de la herramienta de pruebas configurada en el proyecto.
+**Ejecutar únicamente las pruebas de la clase Word:**
+
+```bash
+mvn -Dtest=WordTest test
+```
+
+**Ejecutar únicamente las pruebas de la clase WorkBank:**
+
+```bash
+mvn -Dtest=WorkBankTest test
+```
+
+**Interpretar los resultados:** `BUILD SUCCESS` indica que Maven terminó correctamente; revisar también el número de pruebas ejecutadas y los valores `Failures` y `Errors`. Si aparece `BUILD FAILURE`, consultar el detalle de la prueba o error de compilación en `Output`.
+
+## Sincronización de la rama de desarrollo
+
+Si el proyecto ya está clonado y no hay cambios locales sin guardar, actualizar las pruebas y el código de la rama de trabajo:
+
+```bash
+git fetch origin
+git switch nunatogo-desa
+git pull --ff-only origin nunatogo-desa
+```
+
+No ejecutar `git switch` si hay cambios locales que podrían sobrescribirse; guardarlos o revisarlos antes.
 
 ---
 
