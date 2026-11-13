@@ -2,6 +2,7 @@ package com.poo.hangman.controller;
 
 import com.poo.hangman.model.Category;
 import com.poo.hangman.model.Level;
+import com.poo.hangman.model.RoundStatus;
 import com.poo.hangman.model.Word;
 import com.poo.hangman.model.WorkBank;
 
@@ -23,11 +24,6 @@ public class HangmanGame {
 
     public static final int MAX_ERRORS = 7;
     public static final int TOTAL_ROUNDS = 3;
-
-    /** Estados de una ronda. */
-    public enum RoundStatus {
-        IN_PROGRESS, WON, LOST
-    }
 
     private final WorkBank wordBank;
     private final Category selectedCategory;
@@ -92,7 +88,7 @@ public class HangmanGame {
         correctLetters.clear();
         incorrectLetters.clear();
         wrongAttempts = 0;
-        roundStatus = RoundStatus.IN_PROGRESS;
+        roundStatus = RoundStatus.EN_CURSO;
         Level level = getCurrentLevel();
         currentWord = selectedCategory == null
                 ? wordBank.getRandomWord(level)
@@ -109,7 +105,7 @@ public class HangmanGame {
      * @throws IllegalStateException si la ronda ya terminó
      */
     public boolean guessLetter(char letter) {
-        if (roundStatus != RoundStatus.IN_PROGRESS) {
+        if (roundStatus != RoundStatus.EN_CURSO) {
             throw new IllegalStateException("La ronda ya terminó");
         }
         char normalized = Character.toUpperCase(letter);
@@ -128,13 +124,13 @@ public class HangmanGame {
         if (correct) {
             correctLetters.add(normalized);
             if (allLettersGuessed()) {
-                roundStatus = RoundStatus.WON;
+                roundStatus = RoundStatus.GANADA;
             }
         } else {
             incorrectLetters.add(normalized);
             wrongAttempts++;
             if (wrongAttempts == MAX_ERRORS) {
-                roundStatus = RoundStatus.LOST;
+                roundStatus = RoundStatus.PERDIDA;
             }
         }
         return correct;
@@ -156,7 +152,7 @@ public class HangmanGame {
      * @throws IllegalStateException si la ronda no se ganó
      */
     public boolean advanceRound() {
-        if (roundStatus != RoundStatus.WON) {
+        if (roundStatus != RoundStatus.GANADA) {
             throw new IllegalStateException("Solo puedes avanzar después de ganar la ronda");
         }
         if (roundNumber == TOTAL_ROUNDS) {
@@ -226,12 +222,12 @@ public class HangmanGame {
 
     /** @return true si se completaron exitosamente las tres rondas */
     public boolean isGameWon() {
-        return roundNumber == TOTAL_ROUNDS && roundStatus == RoundStatus.WON;
+        return roundNumber == TOTAL_ROUNDS && roundStatus == RoundStatus.GANADA;
     }
 
     /** @return true si se agotaron los siete errores de una ronda */
     public boolean isGameLost() {
-        return roundStatus == RoundStatus.LOST;
+        return roundStatus == RoundStatus.PERDIDA;
     }
 
     /**
@@ -241,7 +237,7 @@ public class HangmanGame {
      * @throws IllegalStateException si la ronda aún está en curso
      */
     public String getRevealedWord() {
-        if (roundStatus == RoundStatus.IN_PROGRESS) {
+        if (roundStatus == RoundStatus.EN_CURSO) {
             throw new IllegalStateException("La palabra todavía está oculta");
         }
         return currentWord.getText();

@@ -40,13 +40,6 @@ classDiagram
         -allLettersGuessed() boolean
     }
 
-    class RoundStatus {
-        <<enumeration>>
-        IN_PROGRESS
-        WON
-        LOST
-    }
-
     }\n\n    namespace model {\n    class Word {
         -String text
         -String clue
@@ -100,7 +93,7 @@ classDiagram
 
     HangmanGame --> WorkBank : selecciona palabra
     HangmanGame --> Word : ronda actual
-    HangmanGame --> RoundStatus : estado
+    HangmanGame --> RoundStatus : estado de ronda
     HangmanGame ..> Level : progresión
     WorkBank "1" *-- "0..*" Word : almacena
     Word --> Category : pertenece a

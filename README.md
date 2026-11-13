@@ -51,7 +51,7 @@ docs/use-case-diagram.png
 
 ## Diagrama de clases
 
-El diagrama UML **actualizado según las clases implementadas** puede editarse en [`hangman/docs/class-diagram.md`](hangman/docs/class-diagram.md). Muestra los paquetes `model` y `controller`, incluyendo `HangmanGame`, sus relaciones y la sobrecarga de `getRandomWord()`.
+El diagrama UML **actualizado según las clases implementadas** puede editarse en [`hangman/docs/class-diagram.md`](hangman/docs/class-diagram.md). Muestra los paquetes `model` y `controller`, incluyendo `HangmanGame`, la enumeración independiente `RoundStatus` en español y la sobrecarga de `getRandomWord()`.
 
 ```mermaid
 classDiagram
@@ -89,13 +89,6 @@ classDiagram
         +getRevealedWord() String
         -startRound() void
         -allLettersGuessed() boolean
-    }
-
-    class RoundStatus {
-        <<enumeration>>
-        IN_PROGRESS
-        WON
-        LOST
     }
 
     }\n\n    namespace model {\n    class Word {
@@ -151,7 +144,7 @@ classDiagram
 
     HangmanGame --> WorkBank : selecciona palabra
     HangmanGame --> Word : ronda actual
-    HangmanGame --> RoundStatus : estado
+    HangmanGame --> RoundStatus : estado de ronda
     HangmanGame ..> Level : progresión
     WorkBank "1" *-- "0..*" Word : almacena
     Word --> Category : pertenece a

@@ -2,6 +2,7 @@ package com.poo.hangman.controller;
 
 import com.poo.hangman.model.Category;
 import com.poo.hangman.model.Level;
+import com.poo.hangman.model.RoundStatus;
 import com.poo.hangman.model.Word;
 import com.poo.hangman.model.WorkBank;
 
@@ -41,11 +42,11 @@ class HangmanGameTest {
 
     private void winCurrentRound(HangmanGame game, String word) {
         for (char letter : word.toCharArray()) {
-            if (game.getRoundStatus() == HangmanGame.RoundStatus.IN_PROGRESS) {
+            if (game.getRoundStatus() == RoundStatus.EN_CURSO) {
                 assertTrue(game.guessLetter(letter));
             }
         }
-        assertEquals(HangmanGame.RoundStatus.WON, game.getRoundStatus());
+        assertEquals(RoundStatus.GANADA, game.getRoundStatus());
     }
 
     @Test
@@ -56,7 +57,7 @@ class HangmanGameTest {
             () -> assertEquals(Level.FACIL, game.getCurrentLevel()),
             () -> assertEquals(7, game.getRemainingAttempts()),
             () -> assertEquals("_ _ _ _", game.getMaskedWord()),
-            () -> assertEquals(HangmanGame.RoundStatus.IN_PROGRESS, game.getRoundStatus())
+            () -> assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus())
         );
     }
 

@@ -32,10 +32,14 @@ Gestiona el estado de una partida de tres rondas de ahorcado y se apoya en `Work
 | `getRemainingAttempts()` | `int` | Consultar errores restantes |
 | `getCorrectLetters()` | `Set<Character>` | Letras acertadas (colección no modificable) |
 | `getIncorrectLetters()` | `Set<Character>` | Letras equivocadas (colección no modificable) |
-| `getRoundStatus()` | `RoundStatus` | Consultar `IN_PROGRESS`, `WON` o `LOST` |
+| `getRoundStatus()` | `RoundStatus` | Consultar `EN_CURSO`, `GANADA` o `PERDIDA` |
 | `isGameWon()` | `boolean` | Confirmar victoria en la tercera ronda |
 | `isGameLost()` | `boolean` | Confirmar derrota por siete errores |
 | `getRevealedWord()` | `String` | Revelar la palabra una vez terminada la ronda |
+
+## Enumeración del modelo
+
+`RoundStatus` se encuentra en `com.poo.hangman.model` y define `EN_CURSO`, `GANADA` y `PERDIDA`. El método `getDisplayName()` devuelve los textos para la interfaz (`En curso`, `Ganada` y `Perdida`); `toString()` retorna los mismos textos.
 
 ## Relación con POO
 - **Encapsulación:** el estado interno es privado; los getters de conjuntos entregan vistas no modificables.
@@ -46,11 +50,15 @@ Gestiona el estado de una partida de tres rondas de ahorcado y se apoya en `Work
 ## Ejemplo
 
 ```java
+import com.poo.hangman.controller.HangmanGame;
+import com.poo.hangman.model.Category;
+import com.poo.hangman.model.RoundStatus;
+
 HangmanGame game = new HangmanGame(Category.ANIMALES);
 boolean isCorrect = game.guessLetter('A');
 System.out.println(game.getMaskedWord());
 System.out.println(game.getRemainingAttempts());
-if (game.getRoundStatus() == HangmanGame.RoundStatus.WON) {
+if (game.getRoundStatus() == RoundStatus.GANADA) {
     boolean hasNextRound = game.advanceRound();
 }
 ```
