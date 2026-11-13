@@ -241,4 +241,94 @@ class HangmanGameTest {
         assertEquals(6, game.getRemainingAttempts());
     }
 
+
+    /**
+     * Simula que la vista envía E para PERRO y actualiza la palabra.
+     * La letra correcta no consume intentos.
+     */
+    @Test
+    void interfaceSequenceWhenLetterEIsCorrect() throws Exception {
+        HangmanGame game = new HangmanGame();
+        game.startGame();
+        setWord(game, "PERRO");
+
+        boolean correct = game.guessLetter('E');
+
+        assertAll(
+            () -> assertTrue(correct),
+            () -> assertEquals("_ E _ _ _", game.getMaskedWord()),
+            () -> assertEquals(0, game.getWrongAttempts()),
+            () -> assertEquals(7, game.getRemainingAttempts()),
+            () -> assertTrue(game.getCorrectLetters().contains('E')),
+            () -> assertTrue(game.getIncorrectLetters().isEmpty()),
+            () -> assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus())
+        );
+    }
+
+    /**
+     * Simula que la vista envía R para PERRO.
+     * Una única selección revela las dos R de la palabra.
+     */
+    @Test
+    void interfaceSequenceWhenLetterRAppearsTwice() throws Exception {
+        HangmanGame game = new HangmanGame();
+        game.startGame();
+        setWord(game, "PERRO");
+
+        boolean correct = game.guessLetter('R');
+
+        assertAll(
+            () -> assertTrue(correct),
+            () -> assertEquals("_ _ R R _", game.getMaskedWord()),
+            () -> assertEquals(0, game.getWrongAttempts()),
+            () -> assertEquals(7, game.getRemainingAttempts()),
+            () -> assertTrue(game.getCorrectLetters().contains('R')),
+            () -> assertEquals(1, game.getCorrectLetters().size()),
+            () -> assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus())
+        );
+
+        // Pulsar R nuevamente no cambia el estado.
+        assertTrue(game.guessLetter('R'));
+        assertEquals(1, game.getCorrectLetters().size());
+    }
+
+    /**
+     * Completa PERRO: la última letra O gana la ronda fácil.
+     * La partida completa aún no se gana porque faltan dos rondas.
+     */
+    @Test
+    void interfaceSequenceWhenLastLetterCompletesPerro() throws Exception {
+        HangmanGame game = new HangmanGame();
+        game.startGame();
+        setWord(game, "PERRO");
+
+        assertTrue(game.guessLetter('P'));
+        assertTrue(game.guessLetter('E'));
+        assertTrue(game.guessLetter('R'));
+        assertEquals("P E R R _", game.getMaskedWord());
+        assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus());
+
+        // La vista envía la última letra O.
+        boolean correct = game.guessLetter('O');
+
+        assertAll(
+            () -> assertTrue(correct),
+            () -> assertEquals("P E R R O", game.getMaskedWord()),
+            () -> assertEquals(0, game.getWrongAttempts()),
+            () -> assertEquals(7, game.getRemainingAttempts()),
+            () -> assertEquals(RoundStatus.GANADA, game.getRoundStatus()),
+            () -> assertEquals("PERRO", game.getRevealedWord()),
+            () -> assertEquals(1, game.getRoundNumber()),
+            () -> assertFalse(game.isGameWon(),
+                    "Ganar la primera ronda no equivale a ganar las tres rondas")
+        );
+
+        assertThrows(IllegalStateException.class, () -> game.guessLetter('A'));
+        assertTrue(game.advanceRound());
+        assertEquals(2, game.getRoundNumber());
+        assertEquals(Level.MEDIO, game.getCurrentLevel());
+        assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus());
+        assertEquals(7, game.getRemainingAttempts());
+    }
+
 }
