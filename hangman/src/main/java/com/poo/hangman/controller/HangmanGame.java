@@ -1,7 +1,11 @@
 package com.poo.hangman.controller;
 
 import com.poo.hangman.model.Category;
+import com.poo.hangman.model.CategoryHint;
+import com.poo.hangman.model.DescriptionHint;
+import com.poo.hangman.model.Hint;
 import com.poo.hangman.model.Level;
+import com.poo.hangman.model.RevealLetterHint;
 import com.poo.hangman.model.RoundStatus;
 import com.poo.hangman.model.Word;
 import com.poo.hangman.model.WorkBank;
@@ -13,31 +17,47 @@ import java.util.Set;
 /**
  * Controla una partida del ahorcado de tres rondas sin implementar pistas.
  *
- * <p>Las rondas avanzan de FACIL a MEDIO y DIFICIL. El jugador tiene siete
- * errores permitidos en cada ronda y solo puede avanzar tras acertar la
- * palabra. La selección de categoría (fija o aleatoria) se conserva durante
- * toda la partida.</p>
+ * <p>
+ * Las rondas avanzan de FACIL a MEDIO y DIFICIL. El jugador tiene siete errores
+ * permitidos en cada ronda y solo puede avanzar tras acertar la palabra. La
+ * selección de categoría (fija o aleatoria) se conserva durante toda la
+ * partida.</p>
  *
  * @author Grupo 1
  */
 public class HangmanGame {
 
+    // Máximo de errores por palabra
     public static final int MAX_ERRORS = 7;
+    // Máximo de rondas
     public static final int TOTAL_ROUNDS = 3;
 
+    // Banco de palabras
     private final WorkBank wordBank;
+    // Categoría seleccionada por el usuario
     private Category selectedCategory;
+    // Letras correctas
     private Set<Character> correctLetters;
+    // Letras incorrectas
     private Set<Character> incorrectLetters;
-
+    // Palabra que se está jugando
     private Word currentWord;
+    // Número de ronda actual
     private int roundNumber;
+    // Número de errores al momento
     private int wrongAttempts;
+    // Estado de la ronda
     private RoundStatus roundStatus;
+    // Pista de la categoría
+    private Hint categoryHint;
+    // Pista para revelar una letra de la palabra
+    private Hint revealLetterHint;
+    // Pista con la descripción de la palabra
+    private Hint descriptionHint;
 
     /**
-     * Inicializa únicamente el estado base, sin seleccionar una palabra.
-     * La primera ronda se prepara mediante startGame().
+     * Inicializa únicamente el estado base, sin seleccionar una palabra. La
+     * primera ronda se prepara mediante startGame().
      */
     public HangmanGame() {
         this.wordBank = new WorkBank();
@@ -63,8 +83,8 @@ public class HangmanGame {
     }
 
     /**
-     * Restablece el estado inicial, sin comenzar una ronda.
-     * El jugador podrá seleccionar nuevamente su categoría al iniciar.
+     * Restablece el estado inicial, sin comenzar una ronda. El jugador podrá
+     * seleccionar nuevamente su categoría al iniciar.
      */
     public void restartGame() {
         this.selectedCategory = null;
@@ -74,9 +94,15 @@ public class HangmanGame {
         this.roundNumber = 0;
         this.wrongAttempts = 0;
         this.roundStatus = RoundStatus.EN_CURSO;
+        this.categoryHint = new CategoryHint();
+        this.revealLetterHint = new RevealLetterHint();
+        this.descriptionHint = new DescriptionHint();
     }
 
-    /** @return true si ya se inició la partida y existe una ronda activa o finalizada */
+    /**
+     * @return true si ya se inició la partida y existe una ronda activa o
+     * finalizada
+     */
     public boolean isGameStarted() {
         return roundNumber > 0;
     }
@@ -104,8 +130,8 @@ public class HangmanGame {
     }
 
     /**
-     * Comprueba la letra ingresada y actualiza el estado de la ronda.
-     * Las letras repetidas no suman errores.
+     * Comprueba la letra ingresada y actualiza el estado de la ronda. Las
+     * letras repetidas no suman errores.
      *
      * @param letter letra del jugador (una sola letra del alfabeto)
      * @return true cuando la letra está en la palabra; false si no está
@@ -173,7 +199,9 @@ public class HangmanGame {
         return true;
     }
 
-    /** @return palabra oculta con guiones bajos y letras acertadas */
+    /**
+     * @return palabra oculta con guiones bajos y letras acertadas
+     */
     public String getMaskedWord() {
         requireStarted();
         StringBuilder masked = new StringBuilder();
@@ -186,59 +214,83 @@ public class HangmanGame {
         return masked.toString();
     }
 
-    /** @return número de ronda actual: 0 sin iniciar, o entre 1 y 3 */
+    /**
+     * @return número de ronda actual: 0 sin iniciar, o entre 1 y 3
+     */
     public int getRoundNumber() {
         return roundNumber;
     }
 
-    /** @return nivel correspondiente a la ronda actual */
+    /**
+     * @return nivel correspondiente a la ronda actual
+     */
     public Level getCurrentLevel() {
         // Se consulta durante startRound(), antes de asignar currentWord.
         // Por eso solo se valida el número de ronda y no la palabra actual.
         return switch (roundNumber) {
-            case 1 -> Level.FACIL;
-            case 2 -> Level.MEDIO;
-            case 3 -> Level.DIFICIL;
-            default -> throw new IllegalStateException("Número de ronda inválido");
+            case 1 ->
+                Level.FACIL;
+            case 2 ->
+                Level.MEDIO;
+            case 3 ->
+                Level.DIFICIL;
+            default ->
+                throw new IllegalStateException("Número de ronda inválido");
         };
     }
 
-    /** @return categoría fijada al inicio, o null si es aleatoria */
+    /**
+     * @return categoría fijada al inicio, o null si es aleatoria
+     */
     public Category getSelectedCategory() {
         return selectedCategory;
     }
 
-    /** @return estado de la ronda actual */
+    /**
+     * @return estado de la ronda actual
+     */
     public RoundStatus getRoundStatus() {
         return roundStatus;
     }
 
-    /** @return número de errores de la ronda actual */
+    /**
+     * @return número de errores de la ronda actual
+     */
     public int getWrongAttempts() {
         return wrongAttempts;
     }
 
-    /** @return número de errores restantes en la ronda */
+    /**
+     * @return número de errores restantes en la ronda
+     */
     public int getRemainingAttempts() {
         return MAX_ERRORS - wrongAttempts;
     }
 
-    /** @return letras correctas sin permitir modificar el conjunto interno */
+    /**
+     * @return letras correctas sin permitir modificar el conjunto interno
+     */
     public Set<Character> getCorrectLetters() {
         return correctLetters == null ? Collections.emptySet() : Collections.unmodifiableSet(correctLetters);
     }
 
-    /** @return letras incorrectas sin permitir modificar el conjunto interno */
+    /**
+     * @return letras incorrectas sin permitir modificar el conjunto interno
+     */
     public Set<Character> getIncorrectLetters() {
         return incorrectLetters == null ? Collections.emptySet() : Collections.unmodifiableSet(incorrectLetters);
     }
 
-    /** @return true si se completaron exitosamente las tres rondas */
+    /**
+     * @return true si se completaron exitosamente las tres rondas
+     */
     public boolean isGameWon() {
         return roundNumber == TOTAL_ROUNDS && roundStatus == RoundStatus.GANADA;
     }
 
-    /** @return true si se agotaron los siete errores de una ronda */
+    /**
+     * @return true si se agotaron los siete errores de una ronda
+     */
     public boolean isGameLost() {
         return roundStatus == RoundStatus.PERDIDA;
     }
@@ -257,11 +309,14 @@ public class HangmanGame {
         return currentWord.getText();
     }
 
-    /** @return categoría real de la palabra de la ronda actual */
+    /**
+     * @return categoría real de la palabra de la ronda actual
+     */
     public Category getCurrentWordCategory() {
         requireStarted();
         return currentWord.getCategory();
     }
+
     /**
      * Evita utilizar una ronda antes de iniciar la partida.
      */
@@ -271,4 +326,56 @@ public class HangmanGame {
         }
     }
 
+    /**
+     * Muestra la categoría de la palabra actual.
+     *
+     * @return categoría de la palabra en español
+     */
+    public String useCategoryHint() {
+        requireHintAvailable();
+
+        return categoryHint.useHint(currentWord, correctLetters);
+    }
+
+    /**
+     * Muestra la descripción asociada a la palabra.
+     *
+     * @return pista escrita
+     */
+    public String useDescriptionHint() {
+        requireHintAvailable();
+
+        return descriptionHint.useHint(currentWord, correctLetters);
+    }
+
+    /**
+     * Revela una letra aleatoria pendiente de descubrir. Si completa la
+     * palabra, puede ganar la ronda.
+     *
+     * @return letra revelada
+     */
+    public String useRevealLetterHint() {
+        requireHintAvailable();
+
+        String revealedLetter = revealLetterHint.useHint(currentWord, correctLetters);
+
+        // Utilizamos la lógica existente para registrar el acierto y actualizar el estado de la ronda.
+        guessLetter(revealedLetter.charAt(0));
+
+        return revealedLetter;
+    }
+
+    /**
+     * Verifica que se puedan solicitar pistas.
+     */
+    private void requireHintAvailable() {
+
+        requireStarted();
+
+        if (roundStatus != RoundStatus.EN_CURSO) {
+            throw new IllegalStateException(
+                    "No puedes utilizar pistas cuando la ronda terminó"
+            );
+        }
+    }
 }
