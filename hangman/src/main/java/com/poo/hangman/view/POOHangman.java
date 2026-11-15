@@ -322,11 +322,14 @@ public class POOHangman extends javax.swing.JFrame {
 
     private void guessBottonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guessBottonActionPerformed
         String letter = letterText.getText();
-        //Char caracter = 
+        char typedCharacter = letter.charAt(0);
         System.out.println("Letra digitada: " + letter);
-        /*if(this.controller.guessLetter()){
-            
-        }*/
+        if(this.controller.guessLetter(typedCharacter)){
+            this.maskedWord.setText(this.controller.getMaskedWord());
+        }else{
+            this.wrongAttempts.setText(String.valueOf(this.controller.getWrongAttempts()));
+            this.incorrectLetters.setText(this.controller.getStringIncorrectLetters());
+        }
     }//GEN-LAST:event_guessBottonActionPerformed
     
     /**
