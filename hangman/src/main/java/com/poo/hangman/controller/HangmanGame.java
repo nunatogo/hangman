@@ -347,6 +347,11 @@ public class HangmanGame {
         requireStarted();
         return currentWord.getCategory();
     }
+    
+    public String getClueWord(){
+        requireStarted();
+        return currentWord.getClue();
+    }
 
     /**
      * Evita utilizar una ronda antes de iniciar la partida.
