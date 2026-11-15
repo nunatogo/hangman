@@ -6,6 +6,8 @@ package com.poo.hangman.view;
 
 import com.poo.hangman.controller.HangmanGame;
 import com.poo.hangman.model.Category;
+import com.poo.hangman.model.RoundStatus;
+import javax.swing.JPanel;
 
 /**
  * Clase con la interfaz grafica del juego
@@ -13,12 +15,14 @@ import com.poo.hangman.model.Category;
  * @author Grupo 1
  */
 public class POOHangman extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(POOHangman.class.getName());
     // Controlador del juego
     private static HangmanGame controller;
     // Categoría seleccionada por el usuario
     private static Category selectedCategory;
+    // Panel del ahorcado
+    private static HangmanDrawingPanel hangmanDrawing;
 
     /**
      * Creates new form POOHangman
@@ -26,6 +30,10 @@ public class POOHangman extends javax.swing.JFrame {
     public POOHangman() {
         initComponents();
         POOHangman.controller = new HangmanGame();
+        hangmanDrawing = new HangmanDrawingPanel();
+        jPanel1.add(hangmanDrawing);
+        configureView();
+        hangmanDrawing.setErrors(0);
     }
 
     /**
@@ -301,6 +309,47 @@ public class POOHangman extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * * Mete el dibujo del ahorcado dentro del cuadro jPanel1.
+     */
+    private void configureView() {
+        hangmanDrawing = new HangmanDrawingPanel();
+        jPanel1.setLayout(new java.awt.BorderLayout());
+        jPanel1.add(hangmanDrawing, java.awt.BorderLayout.CENTER);
+    }
+
+    /**
+     * * Envía la letra escrita al juego y actualiza la pantalla y el dibujo.
+     */
+    private void guess() {
+        String text = letterText.getText().trim();
+        letterText.setText("");
+        if (text.length() != 1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Escribe una sola letra.");
+            return;
+        }
+        try {
+            controller.guessLetter(text.charAt(0));
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
+            this.roundStatus.setText(controller.getRoundStatus().toString());
+            return;
+        }
+        maskedWord.setText(controller.getMaskedWord());
+        wrongAttempts.setText(controller.getWrongAttempts() + " / " + HangmanGame.MAX_ERRORS);
+        String incorrect = controller.getStringIncorrectLetters();
+        incorrectLetters.setText(incorrect == null ? "" : incorrect);
+        hangmanDrawing.setErrors(controller.getWrongAttempts()); // ← aquí se dibuja
+        
+        if(controller.getWrongAttempts() == HangmanGame.MAX_ERRORS){
+            this.roundStatus.setText(controller.getRoundStatus().toString());
+        }else if(controller.getRoundStatus().equals(RoundStatus.GANADA)){
+            this.roundStatus.setText(controller.getRoundStatus().toString());
+            controller.advanceRound();
+            hangmanDrawing.setErrors(0);
+        }
+    }
+    
     private void categoryListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryListActionPerformed
 
     }//GEN-LAST:event_categoryListActionPerformed
@@ -314,12 +363,21 @@ public class POOHangman extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        viewCategoryselect();
+        if(this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)){
+            this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
+            this.controller.restartGame();
+            hangmanDrawing.setErrors(0);
+        }
+        
+        viewCategorySelect();
         this.controller.startGame(this.selectedCategory);
         this.maskedWord.setText(this.controller.getMaskedWord());
         System.out.println("Palabra seleccionada: " + this.controller.getMaskedWord());
         this.wrongAttempts.setText(String.valueOf(this.controller.getWrongAttempts()));
         this.incorrectLetters.setText(this.controller.getStringIncorrectLetters());
+        this.roundStatus.setText(" ");
+        System.out.println("# ronda: " + this.controller.getRoundNumber());
+        System.out.println("Nivel: " + this.controller.getCurrentLevel());        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void letterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_letterTextActionPerformed
@@ -327,50 +385,47 @@ public class POOHangman extends javax.swing.JFrame {
     }//GEN-LAST:event_letterTextActionPerformed
 
     private void guessBottonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guessBottonActionPerformed
-        String letter = letterText.getText();
-        char typedCharacter = letter.charAt(0);
-        System.out.println("Letra digitada: " + letter);
-        if (this.controller.guessLetter(typedCharacter)) {
-            this.maskedWord.setText(this.controller.getMaskedWord());
-        } else {
-            this.wrongAttempts.setText(String.valueOf(this.controller.getWrongAttempts()));
-            this.incorrectLetters.setText(this.controller.getStringIncorrectLetters());
+        guess();
+        System.out.println(". # ronda: " + this.controller.getRoundNumber());
+        System.out.println(". Nivel: " + this.controller.getCurrentLevel());
+        if(this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)){
+            this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
+            this.controller.restartGame();
         }
-        this.roundStatus.setText(this.controller.getRoundStatus().toString());
     }//GEN-LAST:event_guessBottonActionPerformed
 
     /**
      * Asigna en el atributo, la categoría seleccionada por el usuario
      */
-    private void viewCategoryselect() {
+    private void viewCategorySelect() {
         String category = categoryList.getSelectedItem().toString();
         System.out.println("Categoría seleccionada: " + category);
         switch (category) {
             case "Animales":
                 this.selectedCategory = Category.ANIMALES;
                 break;
-            
+
             case "Países":
                 this.selectedCategory = Category.PAISES;
                 break;
-            
+
             case "Deportes":
                 this.selectedCategory = Category.DEPORTES;
                 break;
-            
+
             case "Objetos":
                 this.selectedCategory = Category.OBJETOS;
                 break;
-            
+
             case "Comidas":
                 this.selectedCategory = Category.COMIDAS;
                 break;
-            
+
             default:
                 this.selectedCategory = null;
                 break;
         }
-        
+
     }
 
     /**
