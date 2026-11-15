@@ -13,6 +13,7 @@ import com.poo.hangman.model.WorkBank;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Controla una partida del ahorcado de tres rondas sin implementar pistas.
@@ -78,7 +79,6 @@ public class HangmanGame {
      */
     public void startGame(Category category) {
         this.selectedCategory = category;
-        this.roundNumber = 1;
         startRound();
     }
 
@@ -91,7 +91,7 @@ public class HangmanGame {
         this.currentWord = null;
         this.correctLetters = null;
         this.incorrectLetters = null;
-        this.roundNumber = 0;
+        this.roundNumber = 1;
         this.wrongAttempts = 0;
         this.roundStatus = RoundStatus.EN_CURSO;
         this.categoryHint = new CategoryHint();
@@ -273,12 +273,34 @@ public class HangmanGame {
     public Set<Character> getCorrectLetters() {
         return correctLetters == null ? Collections.emptySet() : Collections.unmodifiableSet(correctLetters);
     }
+    
+    public String getStringCorrectLetters() {
+        if (correctLetters.isEmpty()) {
+            return null;
+        }
+
+        return correctLetters
+                .stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(" "));
+    }
 
     /**
      * @return letras incorrectas sin permitir modificar el conjunto interno
      */
     public Set<Character> getIncorrectLetters() {
         return incorrectLetters == null ? Collections.emptySet() : Collections.unmodifiableSet(incorrectLetters);
+    }
+    
+    public String getStringIncorrectLetters() {
+        if (incorrectLetters.isEmpty()) {
+            return null;
+        }
+
+        return incorrectLetters
+                .stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(" "));
     }
 
     /**

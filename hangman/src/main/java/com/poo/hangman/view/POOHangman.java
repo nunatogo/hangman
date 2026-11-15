@@ -15,8 +15,10 @@ import com.poo.hangman.model.Category;
 public class POOHangman extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(POOHangman.class.getName());
+    // Controlador del juego
     private static HangmanGame controller;
-    private static Category selectCategory;
+    // Categoría seleccionada por el usuario
+    private static Category selectedCategory;
 
     /**
      * Creates new form POOHangman
@@ -41,24 +43,25 @@ public class POOHangman extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jProgressBar1 = new javax.swing.JProgressBar();
-        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jProgressBar2 = new javax.swing.JProgressBar();
-        jLabel6 = new javax.swing.JLabel();
+        maskedWord = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton5 = new javax.swing.JButton();
+        letterText = new javax.swing.JTextField();
+        guessBotton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        wrongAttempts = new javax.swing.JLabel();
+        incorrectLetters = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -86,11 +89,7 @@ public class POOHangman extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
         jLabel2.setText("Ronda 1  de 3");
 
-        jLabel3.setText("Errores: 0 / 7 ");
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(46, 125, 50));
-        jLabel4.setText("Letras correctas:");
+        jLabel3.setText("Errores: ");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(198, 40, 40));
@@ -98,8 +97,8 @@ public class POOHangman extends javax.swing.JFrame {
 
         jProgressBar2.setForeground(new java.awt.Color(198, 40, 40));
 
-        jLabel6.setFont(new java.awt.Font("Monospaced", 1, 36)); // NOI18N
-        jLabel6.setText("_ _ _ _ _ _ _ ");
+        maskedWord.setFont(new java.awt.Font("Monospaced", 1, 36)); // NOI18N
+        maskedWord.setText("_ _ _ _ _ _ _ ");
 
         jLabel7.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
         jLabel7.setText("Nivel: Fácil ");
@@ -141,10 +140,13 @@ public class POOHangman extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         jLabel9.setText("Escribe tu letra:");
 
-        jButton5.setBackground(new java.awt.Color(156, 183, 238));
-        jButton5.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(255, 255, 255));
-        jButton5.setText("Adivinar");
+        letterText.addActionListener(this::letterTextActionPerformed);
+
+        guessBotton.setBackground(new java.awt.Color(156, 183, 238));
+        guessBotton.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        guessBotton.setForeground(new java.awt.Color(255, 255, 255));
+        guessBotton.setText("Adivinar");
+        guessBotton.addActionListener(this::guessBottonActionPerformed);
 
         jPanel3.setBackground(new java.awt.Color(156, 183, 238));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PISTAS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Century Gothic", 1, 18), new java.awt.Color(255, 255, 255))); // NOI18N
@@ -228,18 +230,23 @@ public class POOHangman extends javax.swing.JFrame {
                                 .addComponent(categoryList, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(maskedWord, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(144, 144, 144)
+                                .addComponent(wrongAttempts))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(incorrectLetters))
                             .addComponent(jProgressBar2, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(76, 76, 76)
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton5)))
+                        .addComponent(letterText, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(guessBotton)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(53, 53, 53))
@@ -261,20 +268,22 @@ public class POOHangman extends javax.swing.JFrame {
                             .addComponent(categoryList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton1))
                         .addGap(38, 38, 38)
-                        .addComponent(jLabel6)
+                        .addComponent(maskedWord)
                         .addGap(58, 58, 58)
-                        .addComponent(jLabel3)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(wrongAttempts))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jProgressBar2, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5)
-                        .addGap(29, 29, 29)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(incorrectLetters))
+                        .addGap(51, 51, 51)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(letterText, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(guessBotton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -300,34 +309,55 @@ public class POOHangman extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         viewCategoryselect();
-        this.controller.startGame(this.selectCategory);
+        this.controller.startGame(this.selectedCategory);
+        this.maskedWord.setText(this.controller.getMaskedWord());
+        System.out.println("Palabra seleccionada: " + this.controller.getMaskedWord());
+        this.wrongAttempts.setText(String.valueOf(this.controller.getWrongAttempts()));
+        this.incorrectLetters.setText(this.controller.getStringIncorrectLetters());
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void letterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_letterTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_letterTextActionPerformed
+
+    private void guessBottonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guessBottonActionPerformed
+        String letter = letterText.getText();
+        //Char caracter = 
+        System.out.println("Letra digitada: " + letter);
+        /*if(this.controller.guessLetter()){
+            
+        }*/
+    }//GEN-LAST:event_guessBottonActionPerformed
+    
+    /**
+     * Asigna en el atributo, la categoría seleccionada por el usuario
+     */
     private void viewCategoryselect() {
         String category = categoryList.getSelectedItem().toString();
         System.out.println("Categoría seleccionada: " + category);
         switch (category) {
             case "Animales":
-                this.selectCategory = Category.ANIMALES;
+                this.selectedCategory = Category.ANIMALES;
                 break;
 
             case "Países":
-                this.selectCategory = Category.PAISES;
+                this.selectedCategory = Category.PAISES;
                 break;
 
             case "Deportes":
-                this.selectCategory = Category.DEPORTES;
+                this.selectedCategory = Category.DEPORTES;
                 break;
 
             case "Objetos":
-                this.selectCategory = Category.OBJETOS;
+                this.selectedCategory = Category.OBJETOS;
                 break;
 
             case "Comidas":
-                this.selectCategory = Category.COMIDAS;
+                this.selectedCategory = Category.COMIDAS;
                 break;
 
             default:
-                this.selectCategory = null;
+                this.selectedCategory = null;
                 break;
         }
 
@@ -360,18 +390,17 @@ public class POOHangman extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> categoryList;
+    private javax.swing.JButton guessBotton;
+    private javax.swing.JLabel incorrectLetters;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -382,6 +411,8 @@ public class POOHangman extends javax.swing.JFrame {
     private javax.swing.JProgressBar jProgressBar2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField letterText;
+    private javax.swing.JLabel maskedWord;
+    private javax.swing.JLabel wrongAttempts;
     // End of variables declaration//GEN-END:variables
 }

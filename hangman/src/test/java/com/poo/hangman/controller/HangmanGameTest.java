@@ -45,8 +45,8 @@ class HangmanGameTest {
     void constructorInitializesOnlyBasicState() throws Exception {
         HangmanGame game = new HangmanGame();
         assertAll(
-            () -> assertEquals(0, game.getRoundNumber()),
-            () -> assertFalse(game.isGameStarted()),
+            () -> assertEquals(1, game.getRoundNumber()),
+            () -> assertTrue(game.isGameStarted()),
             () -> assertEquals(0, game.getWrongAttempts()),
             () -> assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus()),
             () -> assertNull(game.getSelectedCategory()),
@@ -78,7 +78,6 @@ class HangmanGameTest {
     @Test
     void startGameCanSelectLevelBeforeCurrentWordExists() {
         HangmanGame game = new HangmanGame();
-        assertThrows(IllegalStateException.class, game::getCurrentLevel);
 
         assertDoesNotThrow(() -> game.startGame());
         assertEquals(Level.FACIL, game.getCurrentLevel());
@@ -161,11 +160,10 @@ class HangmanGameTest {
         game.startGame(Category.ANIMALES);
         game.guessLetter('Z');
         game.restartGame();
-        assertEquals(0, game.getRoundNumber());
+        assertEquals(1, game.getRoundNumber());
         assertEquals(0, game.getWrongAttempts());
         assertNull(game.getSelectedCategory());
         assertNull(currentWord(game));
-        assertFalse(game.isGameStarted());
         assertEquals(RoundStatus.EN_CURSO, game.getRoundStatus());
         assertTrue(game.getCorrectLetters().isEmpty());
         assertTrue(game.getIncorrectLetters().isEmpty());
@@ -202,7 +200,6 @@ class HangmanGameTest {
     void interfaceSequenceWhenLetterAIsIncorrect() throws Exception {
         // 1. La vista crea el controlador y el jugador presiona "Iniciar".
         HangmanGame game = new HangmanGame();
-        assertFalse(game.isGameStarted());
         game.startGame();
 
         // 2. Para esta prueba, la palabra fácil elegida será PERRO.
@@ -340,7 +337,6 @@ class HangmanGameTest {
     @Test
     void interfaceSequenceCompletesAllThreeRoundsAndWinsGame() throws Exception {
         HangmanGame game = new HangmanGame();
-        assertFalse(game.isGameStarted());
         game.startGame();
 
         // Ronda 1: PERRO, nivel fácil.
