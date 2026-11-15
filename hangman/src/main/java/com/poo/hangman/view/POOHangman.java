@@ -350,7 +350,28 @@ public class POOHangman extends javax.swing.JFrame {
             this.roundStatus.setText(controller.getRoundStatus().toString());
             controller.advanceRound();
             hangmanDrawing.setErrors(0);
+            updateRoundInfo();
         }
+    }
+
+    /**
+     * Actualiza las etiquetas de ronda y nivel según el estado del juego.
+     */
+    private void updateRoundInfo() {
+        jLabel2.setText("Ronda " + controller.getRoundNumber() + " de " + HangmanGame.TOTAL_ROUNDS);
+        String level;
+        switch (controller.getCurrentLevel()) {
+            case MEDIO:
+                level = "Medio";
+                break;
+            case DIFICIL:
+                level = "Difícil";
+                break;
+            default:
+                level = "Fácil";
+                break;
+        }
+        jLabel7.setText("Nivel: " + level);
     }
     
     private void categoryListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryListActionPerformed
@@ -358,7 +379,16 @@ public class POOHangman extends javax.swing.JFrame {
     }//GEN-LAST:event_categoryListActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        if (this.controller.isGameStarted()
+                && this.controller.getRoundStatus().equals(RoundStatus.EN_CURSO)) {
+            try {
+                jTextHint.setText(this.controller.useCategoryHint());
+            } catch (IllegalStateException ex) {
+                jTextHint.setText("Esta pista ya fue utilizada en esta ronda");
+            }
+        } else {
+            jTextHint.setText("Opción no permitida");
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -379,6 +409,7 @@ public class POOHangman extends javax.swing.JFrame {
         this.wrongAttempts.setText(String.valueOf(this.controller.getWrongAttempts()));
         this.incorrectLetters.setText(this.controller.getStringIncorrectLetters());
         this.roundStatus.setText(" ");
+        updateRoundInfo();
         System.out.println("# ronda: " + this.controller.getRoundNumber());
         System.out.println("Nivel: " + this.controller.getCurrentLevel());        
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -394,6 +425,7 @@ public class POOHangman extends javax.swing.JFrame {
         if(this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)){
             this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
             this.controller.restartGame();
+            updateRoundInfo();
         }
     }//GEN-LAST:event_guessBottonActionPerformed
 
