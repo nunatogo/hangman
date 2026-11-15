@@ -7,7 +7,6 @@ package com.poo.hangman.view;
 import com.poo.hangman.controller.HangmanGame;
 import com.poo.hangman.model.Category;
 import com.poo.hangman.model.RoundStatus;
-import javax.swing.JPanel;
 
 /**
  * Clase con la interfaz grafica del juego
@@ -392,7 +391,33 @@ public class POOHangman extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        if (this.controller.isGameStarted()
+                && this.controller.getRoundStatus().equals(RoundStatus.EN_CURSO)) {
+            String letter;
+            try {
+                letter = this.controller.useRevealLetterHint();
+            } catch (IllegalStateException ex) {
+                jTextHint.setText("Esta pista ya fue utilizada en esta ronda");
+                return;
+            }
+            jTextHint.setText("Se revelo la letra " + letter);
+            maskedWord.setText(this.controller.getMaskedWord());
+
+            // Si la letra revelada completa la palabra, la ronda se gana.
+            if (this.controller.getRoundStatus().equals(RoundStatus.GANADA)) {
+                this.roundStatus.setText(this.controller.getRoundStatus().toString());
+                if (this.controller.getRoundNumber() == HangmanGame.TOTAL_ROUNDS) {
+                    this.roundStatus.setText("GANASTE EL JUEGO");
+                    this.controller.restartGame();
+                } else {
+                    this.controller.advanceRound();
+                }
+                hangmanDrawing.setErrors(0);
+                updateRoundInfo();
+            }
+        } else {
+            jTextHint.setText("Opcion no permitida");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
