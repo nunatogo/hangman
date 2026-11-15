@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package com.poo.hangman.view;
 
 import com.poo.hangman.controller.HangmanGame;
@@ -335,6 +331,7 @@ public class POOHangman extends javax.swing.JFrame {
         } catch (IllegalArgumentException | IllegalStateException ex) {
             javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
             this.roundStatus.setText(controller.getRoundStatus().toString());
+            this.jTextHint.setText(" ");
             return;
         }
         maskedWord.setText(controller.getMaskedWord());
@@ -345,11 +342,13 @@ public class POOHangman extends javax.swing.JFrame {
         
         if(controller.getWrongAttempts() == HangmanGame.MAX_ERRORS){
             this.roundStatus.setText(controller.getRoundStatus().toString());
+            this.jTextHint.setText(" ");
         }else if(controller.getRoundStatus().equals(RoundStatus.GANADA)){
             this.roundStatus.setText(controller.getRoundStatus().toString());
             controller.advanceRound();
             hangmanDrawing.setErrors(0);
             updateRoundInfo();
+            this.jTextHint.setText(" ");
         }
     }
 
@@ -386,7 +385,7 @@ public class POOHangman extends javax.swing.JFrame {
                 jTextHint.setText("Esta pista ya fue utilizada en esta ronda");
             }
         } else {
-            jTextHint.setText("Opción no permitida");
+            this.jTextHint.setText("Opción no permitida");
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -409,6 +408,7 @@ public class POOHangman extends javax.swing.JFrame {
                 if (this.controller.getRoundNumber() == HangmanGame.TOTAL_ROUNDS) {
                     this.roundStatus.setText("GANASTE EL JUEGO");
                     this.controller.restartGame();
+                    this.jTextHint.setText(" ");
                 } else {
                     this.controller.advanceRound();
                 }
@@ -425,18 +425,16 @@ public class POOHangman extends javax.swing.JFrame {
             this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
             this.controller.restartGame();
             hangmanDrawing.setErrors(0);
+            this.jTextHint.setText(" ");
         }
         
         viewCategorySelect();
         this.controller.startGame(this.selectedCategory);
         this.maskedWord.setText(this.controller.getMaskedWord());
-        System.out.println("Palabra seleccionada: " + this.controller.getMaskedWord());
         this.wrongAttempts.setText(String.valueOf(this.controller.getWrongAttempts()));
         this.incorrectLetters.setText(this.controller.getStringIncorrectLetters());
         this.roundStatus.setText(" ");
-        updateRoundInfo();
-        System.out.println("# ronda: " + this.controller.getRoundNumber());
-        System.out.println("Nivel: " + this.controller.getCurrentLevel());        
+        updateRoundInfo();       
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void letterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_letterTextActionPerformed
@@ -445,12 +443,11 @@ public class POOHangman extends javax.swing.JFrame {
 
     private void guessBottonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guessBottonActionPerformed
         guess();
-        System.out.println(". # ronda: " + this.controller.getRoundNumber());
-        System.out.println(". Nivel: " + this.controller.getCurrentLevel());
         if(this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)){
             this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
             this.controller.restartGame();
             updateRoundInfo();
+            this.jTextHint.setText(" ");
         }
     }//GEN-LAST:event_guessBottonActionPerformed
 
@@ -468,7 +465,6 @@ public class POOHangman extends javax.swing.JFrame {
      */
     private void viewCategorySelect() {
         String category = categoryList.getSelectedItem().toString();
-        System.out.println("Categoría seleccionada: " + category);
         switch (category) {
             case "Animales":
                 this.selectedCategory = Category.ANIMALES;
