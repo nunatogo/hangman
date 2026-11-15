@@ -4,19 +4,26 @@
  */
 package com.poo.hangman.view;
 
+import com.poo.hangman.controller.HangmanGame;
+import com.poo.hangman.model.Category;
+
 /**
+ * Clase con la interfaz grafica del juego
  *
- * @author lizet
+ * @author Grupo 1
  */
 public class POOHangman extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(POOHangman.class.getName());
+    private static HangmanGame controller;
+    private static Category selectCategory;
 
     /**
      * Creates new form POOHangman
      */
     public POOHangman() {
         initComponents();
+        POOHangman.controller = new HangmanGame();
     }
 
     /**
@@ -28,7 +35,7 @@ public class POOHangman extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        Categoria = new javax.swing.JComboBox<>();
+        categoryList = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -55,10 +62,11 @@ public class POOHangman extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        Categoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aleatoria", "Animales", "Países", "Deportes", "Objetos", "Comidas" }));
-        Categoria.addActionListener(this::CategoriaActionPerformed);
+        categoryList.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aleatoria", "Animales", "Países", "Deportes", "Objetos", "Comidas" }));
+        categoryList.addActionListener(this::categoryListActionPerformed);
 
         jButton1.setText("Nueva Partida");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jPanel1.setBackground(new java.awt.Color(250, 248, 240));
         jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 255), 2, true));
@@ -217,7 +225,7 @@ public class POOHangman extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(Categoria, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(categoryList, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -250,7 +258,7 @@ public class POOHangman extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8)
-                            .addComponent(Categoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(categoryList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton1))
                         .addGap(38, 38, 38)
                         .addComponent(jLabel6)
@@ -278,9 +286,9 @@ public class POOHangman extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void CategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CategoriaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_CategoriaActionPerformed
+    private void categoryListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryListActionPerformed
+
+    }//GEN-LAST:event_categoryListActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
@@ -289,6 +297,41 @@ public class POOHangman extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        viewCategoryselect();
+        this.controller.startGame(this.selectCategory);
+    }//GEN-LAST:event_jButton1ActionPerformed
+    private void viewCategoryselect() {
+        String category = categoryList.getSelectedItem().toString();
+        System.out.println("Categoría seleccionada: " + category);
+        switch (category) {
+            case "Animales":
+                this.selectCategory = Category.ANIMALES;
+                break;
+
+            case "Países":
+                this.selectCategory = Category.PAISES;
+                break;
+
+            case "Deportes":
+                this.selectCategory = Category.DEPORTES;
+                break;
+
+            case "Objetos":
+                this.selectCategory = Category.OBJETOS;
+                break;
+
+            case "Comidas":
+                this.selectCategory = Category.COMIDAS;
+                break;
+
+            default:
+                this.selectCategory = null;
+                break;
+        }
+
+    }
 
     /**
      * @param args the command line arguments
@@ -316,7 +359,7 @@ public class POOHangman extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> Categoria;
+    private javax.swing.JComboBox<String> categoryList;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
