@@ -43,9 +43,7 @@ El siguiente diagrama representa las principales acciones que puede realizar el 
 
 
 
-```text
-docs/use-case-diagram.png
-```
+![Diagrama de casos de uso](hangman/docs/use-case-diagram.png)
 
 ---
 
@@ -260,7 +258,7 @@ classDiagram
     DescriptionHint ..> Word : consulta pista
 ```
 
-> El PNG anterior (`hangman/src/main/java/docs/class-diagram.png`) se conserva como referencia histórica. El diagrama Mermaid de esta sección y `hangman/docs/class-diagram.md` es la versión vigente.
+> La versión editable vigente del diagrama de clases es Mermaid, tanto aquí como en `hangman/docs/class-diagram.md`. Los recursos gráficos del proyecto se centralizan en `hangman/docs/`.
 
 Las clases, atributos y métodos del proyecto conservan sus nombres en **inglés**, conforme a la implementación Java.
 
