@@ -100,17 +100,23 @@ public class HangmanGame {
     }
 
     /**
-     * @return true si ya se inició la partida y existe una ronda activa o
-     * finalizada
+     * Verifica si la partida ya comenzó y tiene una palabra asignada.
+     *
+     * @return true si la partida está iniciada; false en caso contrario
      */
     public boolean isGameStarted() {
-        return roundNumber > 0;
+        return roundNumber > 0 && currentWord != null;
     }
 
     /**
      * Inicia o reinicia el estado de la ronda actual.
      */
     private void startRound() {
+        // Restablece las tres pistas para la nueva ronda.
+        categoryHint.resetHint();
+        revealLetterHint.resetHint();
+        descriptionHint.resetHint();
+
         if (correctLetters == null) {
             correctLetters = new LinkedHashSet<>();
         } else {
@@ -123,6 +129,7 @@ public class HangmanGame {
         }
         wrongAttempts = 0;
         roundStatus = RoundStatus.EN_CURSO;
+
         Level level = getCurrentLevel();
         currentWord = selectedCategory == null
                 ? wordBank.getRandomWord(level)
@@ -273,13 +280,14 @@ public class HangmanGame {
     public Set<Character> getCorrectLetters() {
         return correctLetters == null ? Collections.emptySet() : Collections.unmodifiableSet(correctLetters);
     }
-    
-    public String getStringCorrectLetters() {
-        if (correctLetters.isEmpty()) {
-            return null;
-        }
 
-        return correctLetters
+    /**
+     * Retorna las letras correctas separadas por espacios.
+     *
+     * @return letras acertadas o una cadena vacía si no existen
+     */
+    public String getStringCorrectLetters() {
+        return getCorrectLetters()
                 .stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(" "));
@@ -291,13 +299,14 @@ public class HangmanGame {
     public Set<Character> getIncorrectLetters() {
         return incorrectLetters == null ? Collections.emptySet() : Collections.unmodifiableSet(incorrectLetters);
     }
-    
-    public String getStringIncorrectLetters() {
-        if (incorrectLetters.isEmpty()) {
-            return null;
-        }
 
-        return incorrectLetters
+    /**
+     * Retorna las letras incorrectas separadas por espacios.
+     *
+     * @return letras incorrectas o una cadena vacía si no existen
+     */
+    public String getStringIncorrectLetters() {
+        return getIncorrectLetters()
                 .stream()
                 .map(String::valueOf)
                 .collect(Collectors.joining(" "));

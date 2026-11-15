@@ -6,29 +6,39 @@ import java.util.Objects;
 /**
  * Representa una palabra del juego del ahorcado.
  *
- * <p>Almacena el texto que debe adivinarse, su categoría, una pista escrita
- * y el nivel de dificultad. El nivel se determina automáticamente a partir
- * de la longitud del texto: de 1 a 5 caracteres (FACIL), de 6 a 8 (MEDIO)
- * y 9 o más (DIFICIL). Solo admite palabras individuales formadas
- * por letras y las normaliza a mayúsculas.</p>
+ * <p>
+ * Almacena el texto que debe adivinarse, su categoría, una pista escrita y el
+ * nivel de dificultad. El nivel se determina automáticamente a partir de la
+ * longitud del texto: de 1 a 5 caracteres (FACIL), de 6 a 8 (MEDIO) y 9 o más
+ * (DIFICIL). Solo admite palabras individuales formadas por letras y las
+ * normaliza a mayúsculas.</p>
  *
- * <p>Esta clase encapsula los datos de una palabra y no gestiona los intentos
- * ni la interfaz gráfica del juego.</p>
+ * <p>
+ * Esta clase encapsula los datos de una palabra y no gestiona los intentos ni
+ * la interfaz gráfica del juego.</p>
  *
  * @author Grupo 1
  */
 public class Word {
 
-    /** Texto de la palabra que debe adivinar el jugador. */
+    /**
+     * Texto de la palabra que debe adivinar el jugador.
+     */
     private String text;
 
-    /** Pista escrita asociada a la palabra. */
+    /**
+     * Pista escrita asociada a la palabra.
+     */
     private String clue;
 
-    /** Categoría a la que pertenece la palabra. */
+    /**
+     * Categoría a la que pertenece la palabra.
+     */
     private Category category;
 
-    /** Nivel calculado según la cantidad de caracteres del texto. */
+    /**
+     * Nivel calculado según la cantidad de caracteres del texto.
+     */
     private Level level;
 
     /**
@@ -129,8 +139,8 @@ public class Word {
     /**
      * Determina la dificultad de la palabra a partir de su longitud.
      *
-     * @return FACIL para hasta 5 caracteres, MEDIO de 6 a 8,
-     *         o DIFICIL para 9 o más caracteres
+     * @return FACIL para hasta 5 caracteres, MEDIO de 6 a 8, o DIFICIL para 9 o
+     * más caracteres
      */
     private Level assignLevel() {
         if (this.text.length() <= 5) {
