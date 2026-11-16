@@ -324,10 +324,11 @@ public class POOHangman extends javax.swing.JFrame {
     private void guess() {
         String text = letterText.getText().trim();
         letterText.setText("");
-        if (text.length() != 1) {
+        if (text.length() != 1 || text.length() > 2) {
             javax.swing.JOptionPane.showMessageDialog(this, "Escribe una sola letra.");
             return;
         }
+
         try {
             controller.guessLetter(text.charAt(0));
         } catch (IllegalArgumentException | IllegalStateException ex) {
@@ -336,6 +337,7 @@ public class POOHangman extends javax.swing.JFrame {
             resetPanel();
             return;
         }
+
         maskedWord.setText(controller.getMaskedWord());
         wrongAttempts.setText(controller.getWrongAttempts() + " / " + HangmanGame.MAX_ERRORS);
         String incorrect = controller.getStringIncorrectLetters();
@@ -347,10 +349,15 @@ public class POOHangman extends javax.swing.JFrame {
             this.jTextHint.setText(" ");
         } else if (controller.getRoundStatus().equals(RoundStatus.GANADA)) {
             this.roundStatus.setText(controller.getRoundStatus().toString());
+            javax.swing.JOptionPane.showMessageDialog(this, "¡Ganaste la ronda! La palabra era " + controller.getRevealedWord());
             controller.advanceRound();
             hangmanDrawing.setErrors(0);
             updateRoundInfo();
             this.jTextHint.setText(" ");
+            maskedWord.setText(controller.getMaskedWord());
+            wrongAttempts.setText(controller.getWrongAttempts() + " / " + HangmanGame.MAX_ERRORS);
+            incorrectLetters.setText("");
+            this.roundStatus.setText(controller.getRoundStatus().toString());
         }
     }
 
@@ -413,7 +420,7 @@ public class POOHangman extends javax.swing.JFrame {
         if (this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)) {
             this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
         }
-        
+
         if (!this.controller.getRoundStatus().equals(RoundStatus.EN_CURSO)) {
             this.controller.restartGame();
             resetPanel();
@@ -436,16 +443,15 @@ public class POOHangman extends javax.swing.JFrame {
 
     private void guessBottonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guessBottonActionPerformed
         guess();
-        
-       
+
         if (this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)) {
             this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
             this.controller.restartGame();
             updateRoundInfo();
             this.jTextHint.setText(" ");
         }
-        
-         hangmanDrawing.setErrors(this.controller.getWrongAttempts());
+
+        hangmanDrawing.setErrors(this.controller.getWrongAttempts());
         jProgressBar2.setValue(this.controller.getWrongAttempts());
     }//GEN-LAST:event_guessBottonActionPerformed
 
@@ -493,7 +499,7 @@ public class POOHangman extends javax.swing.JFrame {
 
     private void resetPanel() {
         System.out.println("Ingresó a resetPanel");
-        this.roundStatus.setText(controller.getRoundStatus().toString());        
+        this.roundStatus.setText(controller.getRoundStatus().toString());
         this.jTextHint.setText(" ");
         jLabel2.setText("Ronda " + controller.getRoundNumber() + " de " + HangmanGame.TOTAL_ROUNDS);
         jLabel7.setText("Nivel: " + controller.getCurrentLevel().toString().toLowerCase());
