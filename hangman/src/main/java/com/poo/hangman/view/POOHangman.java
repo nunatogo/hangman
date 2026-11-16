@@ -100,6 +100,7 @@ public class POOHangman extends javax.swing.JFrame {
         jLabel5.setText("Letras incorrectas:");
 
         jProgressBar2.setForeground(new java.awt.Color(198, 40, 40));
+        jProgressBar2.setMaximum(7);
 
         maskedWord.setFont(new java.awt.Font("Monospaced", 1, 24)); // NOI18N
         maskedWord.setText("_ _ _ _ _ _ _ ");
@@ -434,7 +435,9 @@ public class POOHangman extends javax.swing.JFrame {
         this.wrongAttempts.setText(String.valueOf(this.controller.getWrongAttempts()));
         this.incorrectLetters.setText(this.controller.getStringIncorrectLetters());
         this.roundStatus.setText(" ");
-        updateRoundInfo();       
+        updateRoundInfo();
+        hangmanDrawing.setErrors(0);
+        jProgressBar2.setValue(0);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void letterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_letterTextActionPerformed
@@ -443,6 +446,8 @@ public class POOHangman extends javax.swing.JFrame {
 
     private void guessBottonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guessBottonActionPerformed
         guess();
+        hangmanDrawing.setErrors(this.controller.getWrongAttempts());
+        jProgressBar2.setValue(this.controller.getWrongAttempts());
         if(this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)){
             this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
             this.controller.restartGame();
