@@ -18,11 +18,10 @@ import java.util.stream.Collectors;
 /**
  * Controla una partida del ahorcado de tres rondas sin implementar pistas.
  *
- * <p>
  * Las rondas avanzan de FACIL a MEDIO y DIFICIL. El jugador tiene siete errores
  * permitidos en cada ronda y solo puede avanzar tras acertar la palabra. La
  * selección de categoría (fija o aleatoria) se conserva durante toda la
- * partida.</p>
+ * partida.
  *
  * @author Grupo 1
  */
@@ -63,13 +62,6 @@ public class HangmanGame {
     public HangmanGame() {
         this.wordBank = new WorkBank();
         restartGame();
-    }
-
-    /**
-     * Inicia una partida con categoría aleatoria en cada ronda.
-     */
-    public void startGame() {
-        startGame(null);
     }
 
     /**
@@ -178,6 +170,11 @@ public class HangmanGame {
         return correct;
     }
 
+    /**
+     * Verifica si ya están todas las palabras
+     *
+     * @return boolean
+     */
     private boolean allLettersGuessed() {
         for (char letter : currentWord.getText().toCharArray()) {
             if (!correctLetters.contains(letter)) {
@@ -207,6 +204,8 @@ public class HangmanGame {
     }
 
     /**
+     * Retorna el número de guiones que corresponde a la palabra seleccionada
+     *
      * @return palabra oculta con guiones bajos y letras acertadas
      */
     public String getMaskedWord() {
@@ -222,6 +221,8 @@ public class HangmanGame {
     }
 
     /**
+     * Retorna el número de la ronda
+     *
      * @return número de ronda actual: 0 sin iniciar, o entre 1 y 3
      */
     public int getRoundNumber() {
@@ -229,6 +230,8 @@ public class HangmanGame {
     }
 
     /**
+     * Retorna el nivel del juego
+     *
      * @return nivel correspondiente a la ronda actual
      */
     public Level getCurrentLevel() {
@@ -247,6 +250,8 @@ public class HangmanGame {
     }
 
     /**
+     * Retorna la categoría de la palabra
+     *
      * @return categoría fijada al inicio, o null si es aleatoria
      */
     public Category getSelectedCategory() {
@@ -254,6 +259,8 @@ public class HangmanGame {
     }
 
     /**
+     * Retorna el estado de la ronda
+     *
      * @return estado de la ronda actual
      */
     public RoundStatus getRoundStatus() {
@@ -261,6 +268,8 @@ public class HangmanGame {
     }
 
     /**
+     * Retorna el número de errores de la ronda
+     *
      * @return número de errores de la ronda actual
      */
     public int getWrongAttempts() {
@@ -268,6 +277,8 @@ public class HangmanGame {
     }
 
     /**
+     * Retorna el número de errores restantes
+     *
      * @return número de errores restantes en la ronda
      */
     public int getRemainingAttempts() {
@@ -275,6 +286,8 @@ public class HangmanGame {
     }
 
     /**
+     * Retorna las letras correctas al momento
+     *
      * @return letras correctas sin permitir modificar el conjunto interno
      */
     public Set<Character> getCorrectLetters() {
@@ -341,14 +354,21 @@ public class HangmanGame {
     }
 
     /**
+     * Retorna la categoría de la palabra
+     *
      * @return categoría real de la palabra de la ronda actual
      */
     public Category getCurrentWordCategory() {
         requireStarted();
         return currentWord.getCategory();
     }
-    
-    public String getClueWord(){
+
+    /**
+     * Retorna la pista de la palabra
+     *
+     * @return Pista
+     */
+    public String getClueWord() {
         requireStarted();
         return currentWord.getClue();
     }

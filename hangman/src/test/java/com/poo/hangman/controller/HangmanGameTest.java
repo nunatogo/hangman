@@ -15,7 +15,7 @@ class HangmanGameTest {
 
     private HangmanGame newGame() {
         HangmanGame game = new HangmanGame();
-        game.startGame();
+        game.startGame(null);
         return game;
     }
 
@@ -101,7 +101,7 @@ class HangmanGameTest {
     void startGameCanSelectLevelBeforeCurrentWordExists() {
         HangmanGame game = new HangmanGame();
 
-        assertDoesNotThrow(() -> game.startGame());
+        assertDoesNotThrow(() -> game.startGame(null));
         assertEquals(Level.FACIL, game.getCurrentLevel());
         assertTrue(game.isGameStarted());
         assertFalse(game.getMaskedWord().isBlank());
@@ -129,7 +129,7 @@ class HangmanGameTest {
     @Test
     void incorrectLettersStringIsSeparatedBySpaces() throws Exception {
         HangmanGame game = new HangmanGame();
-        game.startGame();
+        game.startGame(null);
 
         setWord(game, "PERRO");
 
@@ -235,7 +235,7 @@ class HangmanGameTest {
     void interfaceSequenceWhenLetterAIsIncorrect() throws Exception {
         // 1. La vista crea el controlador y el jugador presiona "Iniciar".
         HangmanGame game = new HangmanGame();
-        game.startGame();
+        game.startGame(null);
 
         // 2. Para esta prueba, la palabra fácil elegida será PERRO.
         setWord(game, "PERRO");
@@ -280,7 +280,7 @@ class HangmanGameTest {
     @Test
     void interfaceSequenceWhenLetterEIsCorrect() throws Exception {
         HangmanGame game = new HangmanGame();
-        game.startGame();
+        game.startGame(null);
         setWord(game, "PERRO");
 
         boolean correct = game.guessLetter('E');
@@ -303,7 +303,7 @@ class HangmanGameTest {
     @Test
     void interfaceSequenceWhenLetterRAppearsTwice() throws Exception {
         HangmanGame game = new HangmanGame();
-        game.startGame();
+        game.startGame(null);
         setWord(game, "PERRO");
 
         boolean correct = game.guessLetter('R');
@@ -330,7 +330,7 @@ class HangmanGameTest {
     @Test
     void interfaceSequenceWhenLastLetterCompletesPerro() throws Exception {
         HangmanGame game = new HangmanGame();
-        game.startGame();
+        game.startGame(null);
         setWord(game, "PERRO");
 
         assertTrue(game.guessLetter('P'));
@@ -370,7 +370,7 @@ class HangmanGameTest {
     @Test
     void interfaceSequenceCompletesAllThreeRoundsAndWinsGame() throws Exception {
         HangmanGame game = new HangmanGame();
-        game.startGame();
+        game.startGame(null);
 
         // Ronda 1: PERRO, nivel fácil.
         setWord(game, "PERRO");
@@ -434,9 +434,8 @@ class HangmanGameTest {
      */
     @Test
     void hintsResetWhenAdvancingRound() throws Exception {
-
         HangmanGame game = new HangmanGame();
-        game.startGame();
+        game.startGame(null);
 
         // Utilizar las tres pistas durante la primera ronda.
         game.useCategoryHint();

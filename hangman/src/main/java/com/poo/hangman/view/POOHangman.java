@@ -58,9 +58,9 @@ public class POOHangman extends javax.swing.JFrame {
         letterText = new javax.swing.JTextField();
         guessBotton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButtonClueTextWord = new javax.swing.JButton();
+        jBPistaCategoria = new javax.swing.JButton();
+        jBPistaLetra = new javax.swing.JButton();
+        jBClueTextWord = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextHint = new javax.swing.JTextArea();
         wrongAttempts = new javax.swing.JLabel();
@@ -158,20 +158,20 @@ public class POOHangman extends javax.swing.JFrame {
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "PISTAS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Century Gothic", 1, 18), new java.awt.Color(255, 255, 255))); // NOI18N
         jPanel3.setForeground(new java.awt.Color(255, 255, 255));
 
-        jButton2.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(156, 183, 240));
-        jButton2.setText("Pista 1: Categoría");
-        jButton2.addActionListener(this::jButton2ActionPerformed);
+        jBPistaCategoria.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        jBPistaCategoria.setForeground(new java.awt.Color(156, 183, 240));
+        jBPistaCategoria.setText("Pista 1: Categoría");
+        jBPistaCategoria.addActionListener(this::jBPistaCategoriaActionPerformed);
 
-        jButton3.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(156, 183, 240));
-        jButton3.setText("Pista 2: Letra");
-        jButton3.addActionListener(this::jButton3ActionPerformed);
+        jBPistaLetra.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        jBPistaLetra.setForeground(new java.awt.Color(156, 183, 240));
+        jBPistaLetra.setText("Pista 2: Letra");
+        jBPistaLetra.addActionListener(this::jBPistaLetraActionPerformed);
 
-        jButtonClueTextWord.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
-        jButtonClueTextWord.setForeground(new java.awt.Color(156, 183, 240));
-        jButtonClueTextWord.setText("Pista 3: Pista escrita");
-        jButtonClueTextWord.addActionListener(this::jButtonClueTextWordActionPerformed);
+        jBClueTextWord.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        jBClueTextWord.setForeground(new java.awt.Color(156, 183, 240));
+        jBClueTextWord.setText("Pista 3: Pista escrita");
+        jBClueTextWord.addActionListener(this::jBClueTextWordActionPerformed);
 
         jTextHint.setEditable(false);
         jTextHint.setBackground(new java.awt.Color(255, 255, 255));
@@ -193,11 +193,11 @@ public class POOHangman extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 757, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(90, 90, 90)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jBPistaCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(67, 67, 67)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jBPistaLetra, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(96, 96, 96)
-                        .addComponent(jButtonClueTextWord, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jBClueTextWord, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -205,9 +205,9 @@ public class POOHangman extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButtonClueTextWord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jBPistaCategoria)
+                    .addComponent(jBPistaLetra)
+                    .addComponent(jBClueTextWord, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(15, Short.MAX_VALUE))
@@ -373,7 +373,7 @@ public class POOHangman extends javax.swing.JFrame {
 
     }//GEN-LAST:event_categoryListActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jBPistaCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBPistaCategoriaActionPerformed
         if (this.controller.isGameStarted()
                 && this.controller.getRoundStatus().equals(RoundStatus.EN_CURSO)) {
             try {
@@ -381,12 +381,13 @@ public class POOHangman extends javax.swing.JFrame {
             } catch (IllegalStateException ex) {
                 jTextHint.setText("Esta pista ya fue utilizada en esta ronda");
             }
+            jBPistaCategoria.setEnabled(false);
         } else {
             this.jTextHint.setText("Opción no permitida");
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_jBPistaCategoriaActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void jBPistaLetraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBPistaLetraActionPerformed
         if (this.controller.isGameStarted()
                 && this.controller.getRoundStatus().equals(RoundStatus.EN_CURSO)) {
             String letter;
@@ -411,10 +412,11 @@ public class POOHangman extends javax.swing.JFrame {
                 hangmanDrawing.setErrors(0);
                 updateRoundInfo();
             }
+            this.jBPistaLetra.setEnabled(false);
         } else {
             jTextHint.setText("Opcion no permitida");
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jBPistaLetraActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)) {
@@ -429,6 +431,9 @@ public class POOHangman extends javax.swing.JFrame {
         }
 
         viewCategorySelect();
+        this.jBPistaCategoria.setEnabled(true);
+        this.jBPistaLetra.setEnabled(true);
+        this.jBClueTextWord.setEnabled(true);
         this.controller.startGame(this.selectedCategory);
         this.maskedWord.setText(this.controller.getMaskedWord());
         this.wrongAttempts.setText(String.valueOf(this.controller.getWrongAttempts()));
@@ -455,14 +460,15 @@ public class POOHangman extends javax.swing.JFrame {
         jProgressBar2.setValue(this.controller.getWrongAttempts());
     }//GEN-LAST:event_guessBottonActionPerformed
 
-    private void jButtonClueTextWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClueTextWordActionPerformed
+    private void jBClueTextWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBClueTextWordActionPerformed
         if (this.controller.getRoundStatus().equals(RoundStatus.EN_CURSO)) {
             String clue = this.controller.getClueWord();
             jTextHint.setText(clue);
+            jBClueTextWord.setEnabled(false);
         } else {
             jTextHint.setText("Opción no permitida");
         }
-    }//GEN-LAST:event_jButtonClueTextWordActionPerformed
+    }//GEN-LAST:event_jBClueTextWordActionPerformed
 
     /**
      * Asigna en el atributo, la categoría seleccionada por el usuario
@@ -537,10 +543,10 @@ public class POOHangman extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> categoryList;
     private javax.swing.JButton guessBotton;
     private javax.swing.JLabel incorrectLetters;
+    private javax.swing.JButton jBClueTextWord;
+    private javax.swing.JButton jBPistaCategoria;
+    private javax.swing.JButton jBPistaLetra;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButtonClueTextWord;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
