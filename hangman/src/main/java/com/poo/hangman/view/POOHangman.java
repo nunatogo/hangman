@@ -437,14 +437,16 @@ public class POOHangman extends javax.swing.JFrame {
     private void guessBottonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guessBottonActionPerformed
         guess();
         
-        hangmanDrawing.setErrors(this.controller.getWrongAttempts());
-        jProgressBar2.setValue(this.controller.getWrongAttempts());
+       
         if (this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)) {
             this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
             this.controller.restartGame();
             updateRoundInfo();
             this.jTextHint.setText(" ");
         }
+        
+         hangmanDrawing.setErrors(this.controller.getWrongAttempts());
+        jProgressBar2.setValue(this.controller.getWrongAttempts());
     }//GEN-LAST:event_guessBottonActionPerformed
 
     private void jButtonClueTextWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClueTextWordActionPerformed
