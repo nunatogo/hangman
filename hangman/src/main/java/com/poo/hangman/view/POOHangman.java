@@ -103,7 +103,8 @@ public class POOHangman extends javax.swing.JFrame {
         jProgressBar2.setMaximum(7);
 
         maskedWord.setFont(new java.awt.Font("Monospaced", 1, 24)); // NOI18N
-        maskedWord.setText("_ _ _ _ _ _ _ ");
+        maskedWord.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        maskedWord.setText("_ _ _ _ _ _ _ _ _ _ _ _ ");
 
         jLabel7.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
         jLabel7.setText("Nivel: Fácil ");
@@ -123,11 +124,11 @@ public class POOHangman extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(302, Short.MAX_VALUE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(196, 196, 196)
+                .addGap(165, 165, 165)
                 .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14))
+                .addGap(45, 45, 45))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,16 +189,16 @@ public class POOHangman extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)
-                        .addComponent(jButtonClueTextWord))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(45, 45, 45)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 757, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(56, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 757, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(90, 90, 90)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(67, 67, 67)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(96, 96, 96)
+                        .addComponent(jButtonClueTextWord, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -258,7 +259,7 @@ public class POOHangman extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addComponent(maskedWord, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(53, 53, 53))
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -331,8 +332,8 @@ public class POOHangman extends javax.swing.JFrame {
             controller.guessLetter(text.charAt(0));
         } catch (IllegalArgumentException | IllegalStateException ex) {
             javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
-            this.roundStatus.setText(controller.getRoundStatus().toString());
-            this.jTextHint.setText(" ");
+            System.out.println("Excepcion");
+            resetPanel();
             return;
         }
         maskedWord.setText(controller.getMaskedWord());
@@ -340,11 +341,11 @@ public class POOHangman extends javax.swing.JFrame {
         String incorrect = controller.getStringIncorrectLetters();
         incorrectLetters.setText(incorrect == null ? "" : incorrect);
         hangmanDrawing.setErrors(controller.getWrongAttempts()); // ← aquí se dibuja
-        
-        if(controller.getWrongAttempts() == HangmanGame.MAX_ERRORS){
+
+        if (controller.getWrongAttempts() == HangmanGame.MAX_ERRORS) {
             this.roundStatus.setText(controller.getRoundStatus().toString());
             this.jTextHint.setText(" ");
-        }else if(controller.getRoundStatus().equals(RoundStatus.GANADA)){
+        } else if (controller.getRoundStatus().equals(RoundStatus.GANADA)) {
             this.roundStatus.setText(controller.getRoundStatus().toString());
             controller.advanceRound();
             hangmanDrawing.setErrors(0);
@@ -358,21 +359,9 @@ public class POOHangman extends javax.swing.JFrame {
      */
     private void updateRoundInfo() {
         jLabel2.setText("Ronda " + controller.getRoundNumber() + " de " + HangmanGame.TOTAL_ROUNDS);
-        String level;
-        switch (controller.getCurrentLevel()) {
-            case MEDIO:
-                level = "Medio";
-                break;
-            case DIFICIL:
-                level = "Difícil";
-                break;
-            default:
-                level = "Fácil";
-                break;
-        }
-        jLabel7.setText("Nivel: " + level);
+        jLabel7.setText("Nivel: " + controller.getCurrentLevel().toString().toLowerCase());
     }
-    
+
     private void categoryListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryListActionPerformed
 
     }//GEN-LAST:event_categoryListActionPerformed
@@ -408,8 +397,7 @@ public class POOHangman extends javax.swing.JFrame {
                 this.roundStatus.setText(this.controller.getRoundStatus().toString());
                 if (this.controller.getRoundNumber() == HangmanGame.TOTAL_ROUNDS) {
                     this.roundStatus.setText("GANASTE EL JUEGO");
-                    this.controller.restartGame();
-                    this.jTextHint.setText(" ");
+                    resetPanel();
                 } else {
                     this.controller.advanceRound();
                 }
@@ -422,13 +410,17 @@ public class POOHangman extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)){
+        if (this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)) {
             this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
-            this.controller.restartGame();
-            hangmanDrawing.setErrors(0);
-            this.jTextHint.setText(" ");
         }
         
+        if (!this.controller.getRoundStatus().equals(RoundStatus.EN_CURSO)) {
+            this.controller.restartGame();
+            resetPanel();
+            jProgressBar2.setValue(this.controller.getWrongAttempts());
+            jProgressBar2.setValue(0);
+        }
+
         viewCategorySelect();
         this.controller.startGame(this.selectedCategory);
         this.maskedWord.setText(this.controller.getMaskedWord());
@@ -436,8 +428,6 @@ public class POOHangman extends javax.swing.JFrame {
         this.incorrectLetters.setText(this.controller.getStringIncorrectLetters());
         this.roundStatus.setText(" ");
         updateRoundInfo();
-        hangmanDrawing.setErrors(0);
-        jProgressBar2.setValue(0);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void letterTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_letterTextActionPerformed
@@ -446,9 +436,10 @@ public class POOHangman extends javax.swing.JFrame {
 
     private void guessBottonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guessBottonActionPerformed
         guess();
+        
         hangmanDrawing.setErrors(this.controller.getWrongAttempts());
         jProgressBar2.setValue(this.controller.getWrongAttempts());
-        if(this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)){
+        if (this.controller.getRoundNumber() == this.controller.TOTAL_ROUNDS && this.controller.getRoundStatus().equals(RoundStatus.GANADA)) {
             this.roundStatus.setText("FELICITACIONES, HA GANADO EL JUEGO!");
             this.controller.restartGame();
             updateRoundInfo();
@@ -457,10 +448,10 @@ public class POOHangman extends javax.swing.JFrame {
     }//GEN-LAST:event_guessBottonActionPerformed
 
     private void jButtonClueTextWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClueTextWordActionPerformed
-        if(this.controller.getRoundStatus().equals(RoundStatus.EN_CURSO)){
+        if (this.controller.getRoundStatus().equals(RoundStatus.EN_CURSO)) {
             String clue = this.controller.getClueWord();
             jTextHint.setText(clue);
-        }else{
+        } else {
             jTextHint.setText("Opción no permitida");
         }
     }//GEN-LAST:event_jButtonClueTextWordActionPerformed
@@ -496,6 +487,17 @@ public class POOHangman extends javax.swing.JFrame {
                 break;
         }
 
+    }
+
+    private void resetPanel() {
+        System.out.println("Ingresó a resetPanel");
+        this.roundStatus.setText(controller.getRoundStatus().toString());        
+        this.jTextHint.setText(" ");
+        jLabel2.setText("Ronda " + controller.getRoundNumber() + " de " + HangmanGame.TOTAL_ROUNDS);
+        jLabel7.setText("Nivel: " + controller.getCurrentLevel().toString().toLowerCase());
+        hangmanDrawing.setErrors(0);
+        jProgressBar2.setValue(this.controller.getWrongAttempts());
+        jProgressBar2.setValue(0);
     }
 
     /**
